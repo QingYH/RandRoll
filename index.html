@@ -498,18 +498,11 @@
         const beautyEffect = document.getElementById('beauty-effect');
         const avatarContainer = document.querySelector('.avatar-container');
         
-        // 音频元素 - 固定背景音乐
-        let backgroundMusic = new Audio("music/background.mp3");
-        let applauseSound = new Audio("music/applause.mp3");
-        
-        // 预加载头像
-        function preloadImages() {
-            students.forEach(student => {
-                const img = new Image();
-                img.src = student.avatar;
-            });
-        }
-        
+        // 音频元素
+        let backgroundMusic = null;
+        let applauseSound = null;
+        let isMusicPlaying = false;
+
         // 创建数学符号
         function createMathSymbols() {
             for (let i = 0; i < 25; i++) {
@@ -561,7 +554,6 @@
                 passwordSection.style.display = 'none';
                 mainContent.style.display = 'block';
                 createMathSymbols();
-                preloadImages(); // 预加载头像
             } else {
                 alert('密码错误，请重新输入！');
                 passwordInput.value = '';
@@ -577,26 +569,80 @@
         
         // 播放背景音乐（点名过程中）
         function playBackgroundMusic() {
-            backgroundMusic.volume = 0.3;
-            backgroundMusic.loop = true;
-            backgroundMusic.play().catch(e => {
-                console.log("背景音乐播放失败:", e);
-            });
-            audioControl.innerHTML = '<i class="fas fa-volume-up"></i>';
+            try {
+                // 停止之前的音乐
+                if (backgroundMusic) {
+                    backgroundMusic.pause();
+                    backgroundMusic.currentTime = 0;
+                }
+                
+                // 创建新的音频实例
+                backgroundMusic = new Audio('music/background.mp3');
+                backgroundMusic.volume = 0.3;
+                backgroundMusic.loop = true;
+                
+                // 播放音乐
+                const playPromise = backgroundMusic.play();
+                if (playPromise !== undefined) {
+                    playPromise.then(() => {
+                        isMusicPlaying = true;
+                        audioControl.innerHTML = '<i class="fas fa-volume-up"></i>';
+                        console.log("背景音乐开始播放");
+                    }).catch(error => {
+                        console.log("背景音乐播放失败:", error);
+                        // 用户交互后重试
+                        document.addEventListener('click', function retryPlay() {
+                            backgroundMusic.play().then(() => {
+                                isMusicPlaying = true;
+                                audioControl.innerHTML = '<i class="fas fa-volume-up"></i>';
+                                console.log("背景音乐重新开始播放");
+                            }).catch(e => {
+                                console.log("背景音乐重试失败:", e);
+                            });
+                            document.removeEventListener('click', retryPlay);
+                        }, { once: true });
+                    });
+                }
+            } catch (error) {
+                console.log("背景音乐初始化失败:", error);
+            }
         }
         
         // 停止背景音乐
         function stopBackgroundMusic() {
-            backgroundMusic.pause();
-            backgroundMusic.currentTime = 0;
+            if (backgroundMusic) {
+                backgroundMusic.pause();
+                backgroundMusic.currentTime = 0;
+                isMusicPlaying = false;
+                console.log("背景音乐已停止");
+            }
         }
         
         // 播放掌声
         function playApplause() {
-            applauseSound.volume = 0.5;
-            applauseSound.play().catch(e => {
-                console.log("掌声播放失败:", e);
-            });
+            try {
+                // 停止之前的掌声
+                if (applauseSound) {
+                    applauseSound.pause();
+                    applauseSound.currentTime = 0;
+                }
+                
+                // 创建新的音频实例
+                applauseSound = new Audio('music/applause.mp3');
+                applauseSound.volume = 0.5;
+                
+                // 播放掌声
+                const playPromise = applauseSound.play();
+                if (playPromise !== undefined) {
+                    playPromise.then(() => {
+                        console.log("掌声开始播放");
+                    }).catch(error => {
+                        console.log("掌声播放失败:", error);
+                    });
+                }
+            } catch (error) {
+                console.log("掌声初始化失败:", error);
+            }
         }
         
         // 显示点赞图标
@@ -611,11 +657,15 @@
         
         // 切换背景音乐
         audioControl.addEventListener('click', function() {
-            if (backgroundMusic.paused) {
-                playBackgroundMusic();
-            } else {
-                stopBackgroundMusic();
+            if (isMusicPlaying && backgroundMusic) {
+                backgroundMusic.pause();
+                isMusicPlaying = false;
                 audioControl.innerHTML = '<i class="fas fa-volume-mute"></i>';
+            } else if (backgroundMusic) {
+                backgroundMusic.play().then(() => {
+                    isMusicPlaying = true;
+                    audioControl.innerHTML = '<i class="fas fa-volume-up"></i>';
+                });
             }
         });
         
@@ -659,16 +709,8 @@
             // 更新显示
             nameElement.textContent = student.name;
             
-            // 使用学生对应的头像 - 确保头像正确加载
-            const img = new Image();
-            img.onload = function() {
-                avatar.style.backgroundImage = `url(${student.avatar})`;
-            };
-            img.onerror = function() {
-                // 如果头像加载失败，使用默认头像
-                avatar.style.backgroundImage = `url(images/default.jpg)`;
-            };
-            img.src = student.avatar;
+            // 直接设置头像
+            avatar.style.backgroundImage = `url(${student.avatar})`;
         }
         
         // 停止滚动
@@ -694,16 +736,8 @@
             // 更新显示
             nameElement.textContent = selectedStudent.name;
             
-            // 使用学生对应的头像 - 确保头像正确加载
-            const img = new Image();
-            img.onload = function() {
-                avatar.style.backgroundImage = `url(${selectedStudent.avatar})`;
-            };
-            img.onerror = function() {
-                // 如果头像加载失败，使用默认头像
-                avatar.style.backgroundImage = `url(images/default.jpg)`;
-            };
-            img.src = selectedStudent.avatar;
+            // 直接设置头像
+            avatar.style.backgroundImage = `url(${selectedStudent.avatar})`;
             
             // 添加装饰特效
             createDecorations();
