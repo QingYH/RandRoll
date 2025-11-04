@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>高等数学课堂随机点名提问系统</title>
+    <title>高等数学课堂随机点名系统</title>
     <style>
         * {
             margin: 0;
@@ -290,19 +290,6 @@
             100% { transform: scale(1); }
         }
         
-        .music-selector {
-            margin: 15px 0;
-        }
-        
-        .music-selector select {
-            padding: 8px 15px;
-            border-radius: 20px;
-            background: rgba(255, 255, 255, 0.9);
-            border: none;
-            font-size: 14px;
-            width: 200px;
-        }
-        
         .beauty-effect {
             position: absolute;
             top: -10px;
@@ -318,19 +305,32 @@
             z-index: 2;
         }
         
-        .sparkle {
+        .star {
             position: absolute;
-            width: 8px;
-            height: 8px;
-            background: white;
-            border-radius: 50%;
-            animation: sparkle 2s infinite;
+            font-size: 20px;
+            animation: starTwinkle 2s infinite;
             opacity: 0;
+            z-index: 3;
         }
         
-        @keyframes sparkle {
-            0%, 100% { opacity: 0; transform: scale(0); }
-            50% { opacity: 1; transform: scale(1); }
+        .flower {
+            position: absolute;
+            font-size: 16px;
+            animation: flowerFloat 3s infinite;
+            opacity: 0;
+            z-index: 3;
+        }
+        
+        @keyframes starTwinkle {
+            0%, 100% { opacity: 0; transform: scale(0) rotate(0deg); }
+            50% { opacity: 1; transform: scale(1) rotate(180deg); }
+        }
+        
+        @keyframes flowerFloat {
+            0% { opacity: 0; transform: translateY(0) rotate(0deg); }
+            20% { opacity: 1; transform: translateY(-10px) rotate(90deg); }
+            80% { opacity: 1; transform: translateY(-20px) rotate(180deg); }
+            100% { opacity: 0; transform: translateY(-30px) rotate(270deg); }
         }
     </style>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
@@ -348,15 +348,6 @@
         <div class="main-content">
             <div class="audio-control" id="audio-control">
                 <i class="fas fa-volume-up"></i>
-            </div>
-            
-            <div class="music-selector">
-                <select id="music-select">
-                    <option value="">选择背景音乐</option>
-                    <option value="music/background1.mp3">轻音乐1</option>
-                    <option value="music/background2.mp3">轻音乐2</option>
-                    <option value="music/background3.mp3">轻音乐3</option>
-                </select>
             </div>
             
             <div class="math-symbols" id="math-symbols"></div>
@@ -504,13 +495,20 @@
         const mathSymbolsContainer = document.getElementById('math-symbols');
         const audioControl = document.getElementById('audio-control');
         const likeIcon = document.getElementById('like-icon');
-        const musicSelect = document.getElementById('music-select');
         const beautyEffect = document.getElementById('beauty-effect');
         const avatarContainer = document.querySelector('.avatar-container');
         
-        // 音频元素
-        let backgroundMusic = new Audio();
+        // 音频元素 - 固定背景音乐
+        let backgroundMusic = new Audio("music/background.mp3");
         let applauseSound = new Audio("music/applause.mp3");
+        
+        // 预加载头像
+        function preloadImages() {
+            students.forEach(student => {
+                const img = new Image();
+                img.src = student.avatar;
+            });
+        }
         
         // 创建数学符号
         function createMathSymbols() {
@@ -524,20 +522,36 @@
             }
         }
         
-        // 创建星光效果
-        function createSparkles() {
-            // 清除之前的星光
-            const existingSparkles = avatarContainer.querySelectorAll('.sparkle');
-            existingSparkles.forEach(sparkle => sparkle.remove());
+        // 创建彩色小星星和花朵
+        function createDecorations() {
+            // 清除之前的装饰
+            const existingDecorations = avatarContainer.querySelectorAll('.star, .flower');
+            existingDecorations.forEach(decoration => decoration.remove());
             
-            // 创建新的星光
-            for (let i = 0; i < 8; i++) {
-                const sparkle = document.createElement('div');
-                sparkle.className = 'sparkle';
-                sparkle.style.left = `${Math.random() * 100}%`;
-                sparkle.style.top = `${Math.random() * 100}%`;
-                sparkle.style.animationDelay = `${Math.random() * 2}s`;
-                avatarContainer.appendChild(sparkle);
+            // 创建彩色小星星
+            const starColors = ['#FFD700', '#FF6B6B', '#4ECDC4', '#FF9FF3', '#F368E0'];
+            for (let i = 0; i < 6; i++) {
+                const star = document.createElement('div');
+                star.className = 'star';
+                star.innerHTML = '★';
+                star.style.left = `${Math.random() * 100}%`;
+                star.style.top = `${Math.random() * 100}%`;
+                star.style.color = starColors[Math.floor(Math.random() * starColors.length)];
+                star.style.animationDelay = `${Math.random() * 2}s`;
+                avatarContainer.appendChild(star);
+            }
+            
+            // 创建花朵
+            const flowerColors = ['#FF6B9D', '#A29BFE', '#55E6C1', '#FD7272', '#BDC581'];
+            for (let i = 0; i < 4; i++) {
+                const flower = document.createElement('div');
+                flower.className = 'flower';
+                flower.innerHTML = '❀';
+                flower.style.left = `${Math.random() * 100}%`;
+                flower.style.top = `${Math.random() * 100}%`;
+                flower.style.color = flowerColors[Math.floor(Math.random() * flowerColors.length)];
+                flower.style.animationDelay = `${Math.random() * 3}s`;
+                avatarContainer.appendChild(flower);
             }
         }
         
@@ -547,6 +561,7 @@
                 passwordSection.style.display = 'none';
                 mainContent.style.display = 'block';
                 createMathSymbols();
+                preloadImages(); // 预加载头像
             } else {
                 alert('密码错误，请重新输入！');
                 passwordInput.value = '';
@@ -562,16 +577,12 @@
         
         // 播放背景音乐（点名过程中）
         function playBackgroundMusic() {
-            const selectedMusic = musicSelect.value;
-            if (selectedMusic) {
-                backgroundMusic.src = selectedMusic;
-                backgroundMusic.volume = 0.3;
-                backgroundMusic.loop = true;
-                backgroundMusic.play().catch(e => {
-                    console.log("背景音乐播放失败:", e);
-                });
-                audioControl.innerHTML = '<i class="fas fa-volume-up"></i>';
-            }
+            backgroundMusic.volume = 0.3;
+            backgroundMusic.loop = true;
+            backgroundMusic.play().catch(e => {
+                console.log("背景音乐播放失败:", e);
+            });
+            audioControl.innerHTML = '<i class="fas fa-volume-up"></i>';
         }
         
         // 停止背景音乐
@@ -648,8 +659,16 @@
             // 更新显示
             nameElement.textContent = student.name;
             
-            // 使用学生对应的头像
-            avatar.style.backgroundImage = `url(${student.avatar})`;
+            // 使用学生对应的头像 - 确保头像正确加载
+            const img = new Image();
+            img.onload = function() {
+                avatar.style.backgroundImage = `url(${student.avatar})`;
+            };
+            img.onerror = function() {
+                // 如果头像加载失败，使用默认头像
+                avatar.style.backgroundImage = `url(images/default.jpg)`;
+            };
+            img.src = student.avatar;
         }
         
         // 停止滚动
@@ -675,11 +694,19 @@
             // 更新显示
             nameElement.textContent = selectedStudent.name;
             
-            // 使用学生对应的头像
-            avatar.style.backgroundImage = `url(${selectedStudent.avatar})`;
+            // 使用学生对应的头像 - 确保头像正确加载
+            const img = new Image();
+            img.onload = function() {
+                avatar.style.backgroundImage = `url(${selectedStudent.avatar})`;
+            };
+            img.onerror = function() {
+                // 如果头像加载失败，使用默认头像
+                avatar.style.backgroundImage = `url(images/default.jpg)`;
+            };
+            img.src = selectedStudent.avatar;
             
-            // 添加美颜特效
-            createSparkles();
+            // 添加装饰特效
+            createDecorations();
             
             // 3秒后隐藏头像，放大姓名
             setTimeout(function() {
@@ -723,9 +750,9 @@
             // 隐藏点赞图标
             likeIcon.classList.remove('show');
             
-            // 清除星光效果
-            const sparkles = avatarContainer.querySelectorAll('.sparkle');
-            sparkles.forEach(sparkle => sparkle.remove());
+            // 清除装饰效果
+            const decorations = avatarContainer.querySelectorAll('.star, .flower');
+            decorations.forEach(decoration => decoration.remove());
         });
     </script>
 </body>
