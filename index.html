@@ -332,12 +332,30 @@
             80% { opacity: 1; transform: translateY(-20px) rotate(180deg); }
             100% { opacity: 0; transform: translateY(-30px) rotate(270deg); }
         }
+        
+        .loading-bar {
+            width: 100%;
+            height: 6px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 3px;
+            margin: 10px 0;
+            overflow: hidden;
+            display: none;
+        }
+        
+        .loading-progress {
+            height: 100%;
+            background: linear-gradient(90deg, #1a2980, #26d0ce);
+            border-radius: 3px;
+            width: 0%;
+            transition: width 0.3s;
+        }
     </style>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 </head>
 <body>
     <div class="container">
-        <h1>高等数学课堂随机点名提问系统</h1>
+        <h1>高等数学课堂随机点名系统</h1>
         
         <div class="password-section">
             <p>请输入教师密码进入系统</p>
@@ -363,6 +381,10 @@
                     </div>
                     <div class="name" id="name">点击开始按钮</div>
                 </div>
+            </div>
+            
+            <div class="loading-bar" id="loading-bar">
+                <div class="loading-progress" id="loading-progress"></div>
             </div>
             
             <div class="status" id="status">准备开始点名</div>
@@ -497,6 +519,8 @@
         const likeIcon = document.getElementById('like-icon');
         const beautyEffect = document.getElementById('beauty-effect');
         const avatarContainer = document.querySelector('.avatar-container');
+        const loadingBar = document.getElementById('loading-bar');
+        const loadingProgress = document.getElementById('loading-progress');
         
         // 音频元素
         let backgroundMusic = null;
@@ -507,6 +531,7 @@
         const avatarCache = new Map();
         let avatarPreloadComplete = false;
         let currentRollingInterval = null;
+        let currentRollingPromise = Promise.resolve();
 
         // 预加载所有头像到缓存
         function preloadAllAvatars() {
@@ -514,11 +539,16 @@
                 console.log("开始预加载所有头像...");
                 let loadedCount = 0;
                 const totalCount = students.length;
+                
+                // 显示加载进度条
+                loadingBar.style.display = 'block';
+                loadingProgress.style.width = '0%';
 
-                students.forEach(student => {
+                students.forEach((student, index) => {
                     // 如果已经在缓存中，跳过
                     if (avatarCache.has(student.avatar)) {
                         loadedCount++;
+                        updateProgress(loadedCount, totalCount);
                         checkCompletion();
                         return;
                     }
@@ -531,6 +561,7 @@
                             url: student.avatar
                         });
                         loadedCount++;
+                        updateProgress(loadedCount, totalCount);
                         console.log(`头像预加载成功: ${student.name} (${loadedCount}/${totalCount})`);
                         checkCompletion();
                     };
@@ -543,15 +574,26 @@
                             url: student.avatar
                         });
                         loadedCount++;
+                        updateProgress(loadedCount, totalCount);
                         checkCompletion();
                     };
-                    img.src = student.avatar;
+                    // 添加时间戳避免缓存问题
+                    img.src = `${student.avatar}?t=${new Date().getTime()}`;
                 });
+
+                function updateProgress(current, total) {
+                    const percent = Math.round((current / total) * 100);
+                    loadingProgress.style.width = `${percent}%`;
+                }
 
                 function checkCompletion() {
                     if (loadedCount === totalCount) {
                         avatarPreloadComplete = true;
                         console.log("所有头像预加载完成");
+                        // 隐藏加载进度条
+                        setTimeout(() => {
+                            loadingBar.style.display = 'none';
+                        }, 500);
                         resolve();
                     }
                 }
@@ -559,6 +601,7 @@
                 // 如果学生列表为空，立即完成
                 if (totalCount === 0) {
                     avatarPreloadComplete = true;
+                    loadingBar.style.display = 'none';
                     resolve();
                 }
             });
@@ -597,7 +640,7 @@
                 img.onerror = function() {
                     console.warn(`❌ 头像加载失败: ${student.name}`);
                     // 使用默认头像或保持当前显示
-                    avatar.style.backgroundImage = 'url("images/default.jpg")';
+                    avatar.style.backgroundImage = 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)';
                     // 标记为加载失败
                     avatarCache.set(student.avatar, {
                         element: null,
@@ -800,7 +843,9 @@
             
             // 开始快速滚动 - 使用改进的头像显示系统
             let lastStudentIndex = -1;
-            let displayPromise = Promise.resolve();
+            
+            // 重置滚动Promise链
+            currentRollingPromise = Promise.resolve();
             
             currentRollingInterval = setInterval(() => {
                 let randomIndex;
@@ -813,7 +858,7 @@
                 const student = students[randomIndex];
                 
                 // 使用链式Promise确保头像按顺序显示
-                displayPromise = displayPromise.then(() => {
+                currentRollingPromise = currentRollingPromise.then(() => {
                     return safelyDisplayAvatar(student);
                 }).catch(error => {
                     console.error("头像显示错误:", error);
@@ -849,24 +894,26 @@
             const selectedStudent = students[randomIndex];
             
             // 使用安全头像显示函数显示最终选中的学生
-            safelyDisplayAvatar(selectedStudent).then(() => {
+            currentRollingPromise = currentRollingPromise.then(() => {
+                return safelyDisplayAvatar(selectedStudent);
+            }).then(() => {
                 console.log(`🎉 最终选中: ${selectedStudent.name}`);
+                
+                // 添加装饰特效
+                createDecorations();
+                
+                // 3秒后隐藏头像，放大姓名
+                setTimeout(function() {
+                    avatar.classList.add('hidden');
+                    nameElement.classList.add('large');
+                }, 3000);
+                
+                // 播放语音 - 只播报"恭喜***同学中奖啦"
+                const finalMessage = `恭喜${selectedStudent.name}同学中奖啦`;
+                speakMessage(finalMessage);
+                
+                startBtn.disabled = false;
             });
-            
-            // 添加装饰特效
-            createDecorations();
-            
-            // 3秒后隐藏头像，放大姓名
-            setTimeout(function() {
-                avatar.classList.add('hidden');
-                nameElement.classList.add('large');
-            }, 3000);
-            
-            // 播放语音 - 只播报"恭喜***同学中奖啦"
-            const finalMessage = `恭喜${selectedStudent.name}同学中奖啦`;
-            speakMessage(finalMessage);
-            
-            startBtn.disabled = false;
         }
         
         // 语音合成
@@ -890,30 +937,29 @@
                 currentRollingInterval = null;
             }
             
-            isRolling = false;
-            studentDisplay.classList.remove('rolling');
-            nameElement.textContent = "点击开始按钮";
-            avatar.style.backgroundImage = '';
-            avatar.classList.remove('hidden');
-            nameElement.classList.remove('large');
-            statusElement.textContent = "准备开始点名";
-            startBtn.disabled = false;
-            
-            // 停止背景音乐
-            stopBackgroundMusic();
-            audioControl.innerHTML = '<i class="fas fa-volume-up"></i>';
-            
             // 停止语音
             if ('speechSynthesis' in window) {
                 window.speechSynthesis.cancel();
             }
             
+            // 停止音乐
+            stopBackgroundMusic();
+            
+            // 重置状态
+            isRolling = false;
+            studentDisplay.classList.remove('rolling');
+            avatar.classList.remove('hidden');
+            nameElement.classList.remove('large');
+            nameElement.textContent = "点击开始按钮";
+            statusElement.textContent = "准备开始点名";
+            startBtn.disabled = false;
+            
             // 隐藏点赞图标
             likeIcon.classList.remove('show');
             
-            // 清除装饰效果
-            const decorations = avatarContainer.querySelectorAll('.star, .flower');
-            decorations.forEach(decoration => decoration.remove());
+            // 清除装饰
+            const existingDecorations = avatarContainer.querySelectorAll('.star, .flower');
+            existingDecorations.forEach(decoration => decoration.remove());
         });
     </script>
 </body>
