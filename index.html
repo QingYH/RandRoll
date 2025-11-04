@@ -503,6 +503,21 @@
         let applauseSound = null;
         let isMusicPlaying = false;
 
+        // 预加载所有头像
+        function preloadAllAvatars() {
+            console.log("开始预加载头像...");
+            students.forEach((student, index) => {
+                const img = new Image();
+                img.onload = function() {
+                    console.log(`头像加载成功: ${student.name}`);
+                };
+                img.onerror = function() {
+                    console.warn(`头像加载失败: ${student.name}`);
+                };
+                img.src = student.avatar;
+            });
+        }
+
         // 创建数学符号
         function createMathSymbols() {
             for (let i = 0; i < 25; i++) {
@@ -554,6 +569,7 @@
                 passwordSection.style.display = 'none';
                 mainContent.style.display = 'block';
                 createMathSymbols();
+                preloadAllAvatars(); // 预加载所有头像
             } else {
                 alert('密码错误，请重新输入！');
                 passwordInput.value = '';
@@ -701,7 +717,7 @@
             setTimeout(stopRolling, totalRollTime);
         });
         
-        // 随机滚动学生
+        // 随机滚动学生 - 彻底修复头像显示
         function rollStudents() {
             const randomIndex = Math.floor(Math.random() * students.length);
             const student = students[randomIndex];
@@ -709,8 +725,19 @@
             // 更新显示
             nameElement.textContent = student.name;
             
-            // 直接设置头像
-            avatar.style.backgroundImage = `url(${student.avatar})`;
+            // 使用Image对象确保头像正确加载和显示
+            const img = new Image();
+            img.onload = function() {
+                // 头像加载成功，设置背景图片
+                avatar.style.backgroundImage = `url(${student.avatar})`;
+            };
+            img.onerror = function() {
+                // 头像加载失败，使用默认头像或保持当前显示
+                console.warn(`头像加载失败: ${student.avatar}`);
+                // 可以在这里设置一个默认头像
+                avatar.style.backgroundImage = 'url(images/default.jpg)';
+            };
+            img.src = student.avatar;
         }
         
         // 停止滚动
@@ -736,8 +763,16 @@
             // 更新显示
             nameElement.textContent = selectedStudent.name;
             
-            // 直接设置头像
-            avatar.style.backgroundImage = `url(${selectedStudent.avatar})`;
+            // 使用Image对象确保最终选中的头像正确显示
+            const img = new Image();
+            img.onload = function() {
+                avatar.style.backgroundImage = `url(${selectedStudent.avatar})`;
+            };
+            img.onerror = function() {
+                console.warn(`最终头像加载失败: ${selectedStudent.avatar}`);
+                avatar.style.backgroundImage = 'url(images/default.jpg)';
+            };
+            img.src = selectedStudent.avatar;
             
             // 添加装饰特效
             createDecorations();
