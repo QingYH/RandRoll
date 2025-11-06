@@ -285,6 +285,10 @@
             background: linear-gradient(to right, #9c27b0, #e91e63);
         }
         
+        .controls button.scoreboard {
+            background: linear-gradient(to right, #4caf50, #8bc34a);
+        }
+        
         .specify-section {
             margin-top: 30px;
             display: none;
@@ -529,6 +533,103 @@
             color: #4caf50;
             display: none;
         }
+
+        /* 得分榜弹窗样式 */
+        .scoreboard-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            z-index: 1000;
+            backdrop-filter: blur(5px);
+        }
+
+        .scoreboard-content {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: linear-gradient(135deg, #1a2980, #26d0ce);
+            padding: 30px;
+            border-radius: 20px;
+            box-shadow: 0 0 50px rgba(0, 0, 0, 0.5);
+            min-width: 500px;
+            max-width: 80%;
+            max-height: 80%;
+            overflow-y: auto;
+        }
+
+        .scoreboard-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .scoreboard-header h2 {
+            color: #ffeb3b;
+            font-size: 2rem;
+            text-shadow: 0 0 10px rgba(255, 235, 59, 0.5);
+        }
+
+        .close-scoreboard {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 2rem;
+            cursor: pointer;
+            padding: 0;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .close-scoreboard:hover {
+            color: #ffeb3b;
+        }
+
+        .scoreboard-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        .scoreboard-table th,
+        .scoreboard-table td {
+            padding: 15px;
+            text-align: center;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .scoreboard-table th {
+            background: rgba(255, 255, 255, 0.1);
+            color: #ffeb3b;
+            font-size: 1.2rem;
+        }
+
+        .scoreboard-table td {
+            font-size: 1.1rem;
+        }
+
+        .scoreboard-table tr:hover {
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        .scoreboard-table tr:nth-child(even) {
+            background: rgba(255, 255, 255, 0.03);
+        }
+
+        .loading-message {
+            text-align: center;
+            padding: 20px;
+            color: #a3d9ff;
+            font-size: 1.2rem;
+        }
     </style>
 </head>
 <body>
@@ -559,6 +660,7 @@
                 <button id="startBtn">开始点名</button>
                 <button id="stopBtn" class="stop">停止点名</button>
                 <button id="specifyBtn" class="specify">指定学生</button>
+                <button id="scoreboardBtn" class="scoreboard">得分榜</button>
             </div>
             
             <div class="specify-section" id="specifySection">
@@ -578,7 +680,7 @@
             
             <div class="system-info">
                 <p>系统提示：点击"开始点名"按钮开始随机选择学生，点击"停止点名"按钮可提前结束选择，点击"指定学生"按钮可手动选择学生</p>
-                <p style="margin-top: 10px; color: #4caf50;">分数将自动保存到GitHub仓库的records目录</p>
+                <p style="margin-top: 10px; color: #4caf50;">分数将自动保存到远程服务器</p>
                 <p style="margin-top: 5px; color: #ff9800;">2025级高数B3班专享</p>
             </div>
         </div>
@@ -592,6 +694,19 @@
             <input type="password" id="githubTokenInput" placeholder="输入 GitHub Token">
             <button id="saveToken">保存 Token</button>
             <div class="token-status" id="tokenStatus">Token 已保存</div>
+        </div>
+    </div>
+
+    <!-- 得分榜弹窗 -->
+    <div class="scoreboard-modal" id="scoreboardModal">
+        <div class="scoreboard-content">
+            <div class="scoreboard-header">
+                <h2>学生得分榜</h2>
+                <button class="close-scoreboard" id="closeScoreboard">&times;</button>
+            </div>
+            <div id="scoreboardData">
+                <div class="loading-message">正在加载得分数据...</div>
+            </div>
         </div>
     </div>
 
@@ -715,6 +830,11 @@
             showTokenStatus('Token 已保存');
         }
 
+        // 清除GitHub Token
+        function clearGitHubToken() {
+            localStorage.removeItem('githubToken');
+        }
+
         // 显示Token状态
         function showTokenStatus(message) {
             const statusElement = document.getElementById('tokenStatus');
@@ -815,9 +935,130 @@
             }, 5000);
         }
 
+        // 获取所有分数记录并计算总分
+        async function getScoreboardData() {
+            const token = getGitHubToken();
+            
+            if (!token) {
+                alert('请先设置GitHub Token');
+                return null;
+            }
+
+            try {
+                // 获取records目录下的所有文件
+                const response = await fetch(
+                    `https://api.github.com/repos/${GITHUB_CONFIG.owner}/${GITHUB_CONFIG.repo}/contents/records`,
+                    {
+                        headers: {
+                            'Authorization': `token ${token}`,
+                            'Accept': 'application/vnd.github.v3+json'
+                        }
+                    }
+                );
+
+                if (!response.ok) {
+                    throw new Error('无法获取records目录');
+                }
+
+                const files = await response.json();
+                const scoreMap = new Map();
+
+                // 处理每个文件
+                for (const file of files) {
+                    if (file.name.endsWith('.txt')) {
+                        // 获取文件内容
+                        const fileResponse = await fetch(file.download_url);
+                        const content = await fileResponse.text();
+                        
+                        // 解析文件内容获取分数
+                        const lines = content.split('\n');
+                        let score = 0;
+                        let name = '';
+                        
+                        for (const line of lines) {
+                            if (line.startsWith('姓名：')) {
+                                name = line.replace('姓名：', '').trim();
+                            } else if (line.startsWith('分数：')) {
+                                score = parseInt(line.replace('分数：', '').trim());
+                            }
+                        }
+                        
+                        if (name && !isNaN(score)) {
+                            // 累加同一学生的分数
+                            if (scoreMap.has(name)) {
+                                scoreMap.set(name, scoreMap.get(name) + score);
+                            } else {
+                                scoreMap.set(name, score);
+                            }
+                        }
+                    }
+                }
+
+                // 转换为数组并排序
+                const scoreArray = Array.from(scoreMap.entries())
+                    .map(([name, totalScore]) => ({ name, totalScore }))
+                    .sort((a, b) => b.totalScore - a.totalScore);
+
+                return scoreArray;
+
+            } catch (error) {
+                console.error('获取得分榜数据失败:', error);
+                return null;
+            }
+        }
+
+        // 显示得分榜
+        async function showScoreboard() {
+            const modal = document.getElementById('scoreboardModal');
+            const scoreboardData = document.getElementById('scoreboardData');
+            
+            modal.style.display = 'block';
+            scoreboardData.innerHTML = '<div class="loading-message">正在加载得分数据...</div>';
+            
+            const data = await getScoreboardData();
+            
+            if (data && data.length > 0) {
+                let html = `
+                    <table class="scoreboard-table">
+                        <thead>
+                            <tr>
+                                <th>排名</th>
+                                <th>姓名</th>
+                                <th>总分</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                `;
+                
+                data.forEach((item, index) => {
+                    html += `
+                        <tr>
+                            <td>${index + 1}</td>
+                            <td>${item.name}</td>
+                            <td>${item.totalScore}</td>
+                        </tr>
+                    `;
+                });
+                
+                html += `
+                        </tbody>
+                    </table>
+                `;
+                
+                scoreboardData.innerHTML = html;
+            } else {
+                scoreboardData.innerHTML = '<div class="loading-message">暂无得分数据或加载失败</div>';
+            }
+        }
+
         // 初始化
         document.addEventListener('DOMContentLoaded', function() {
             createStars();
+            
+            // 网页关闭时清除Token
+            window.addEventListener('beforeunload', function() {
+                clearGitHubToken();
+            });
             
             // GitHub Token 设置功能
             const tokenSection = document.getElementById('githubTokenSection');
@@ -846,6 +1087,19 @@
             if (savedToken) {
                 showTokenStatus('Token 已加载');
             }
+            
+            // 得分榜功能
+            document.getElementById('scoreboardBtn').addEventListener('click', showScoreboard);
+            document.getElementById('closeScoreboard').addEventListener('click', function() {
+                document.getElementById('scoreboardModal').style.display = 'none';
+            });
+            
+            // 点击弹窗外部关闭
+            document.getElementById('scoreboardModal').addEventListener('click', function(e) {
+                if (e.target === this) {
+                    this.style.display = 'none';
+                }
+            });
             
             // 填充学生选择下拉框
             const studentSelect = document.getElementById('studentSelect');
