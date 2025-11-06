@@ -392,6 +392,13 @@
             font-size: 1rem;
             color: rgba(255, 255, 255, 0.6);
         }
+        
+        .save-status {
+            margin-top: 15px;
+            font-size: 1rem;
+            color: #4caf50;
+            display: none;
+        }
     </style>
 </head>
 <body>
@@ -436,10 +443,12 @@
                 <h3>请为 <span id="scoringStudent"></span> 同学打分</h3>
                 <input type="number" id="scoreInput" min="-100" max="100" placeholder="输入分数 (-100到100)">
                 <button id="submitScore">提交分数</button>
+                <div class="save-status" id="saveStatus"></div>
             </div>
             
             <div class="system-info">
                 <p>系统提示：点击"开始点名"按钮开始随机选择学生，点击"停止点名"按钮可提前结束选择，点击"指定学生"按钮可手动选择学生</p>
+                <p style="margin-top: 10px; color: #4caf50;">分数将自动保存到GitHub仓库的records目录</p>
             </div>
         </div>
     </div>
@@ -458,6 +467,13 @@
             "罗时武", "胡耀", "赵紫涵", "高庆鹏", "盛文涛", "卞勇乐", "朱贤涛", "张玉洁", "张鸣威", "张恒",
             "杨佳怡", "陈家乐", "明华东", "姚猛", "项可益", "湛益阳"
         ];
+
+        // GitHub配置（请在此处修改为您的实际配置）
+        const GITHUB_CONFIG = {
+            token: "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",  // 替换为您的GitHub Personal Access Token
+            owner: "QingYH",           // 替换为您的GitHub用户名
+            repo: "RandRoll"            // 替换为您的仓库名称
+        };
 
         // 创建闪烁的星星
         function createStars() {
@@ -545,6 +561,86 @@
                     sparkle.remove();
                 }, 5000);
             }
+        }
+
+        // 保存分数到GitHub
+        async function saveScoreToGitHub(studentName, score) {
+            // 检查GitHub配置是否完整
+            if (!GITHUB_CONFIG.token || !GITHUB_CONFIG.owner || !GITHUB_CONFIG.repo) {
+                showSaveStatus(false, 'GitHub配置不完整，请检查代码中的GITHUB_CONFIG');
+                return false;
+            }
+
+            const record = {
+                name: studentName,
+                score: score,
+                date: new Date().toLocaleString()
+            };
+            
+            const content = `姓名：${record.name}\n分数：${record.score}\n日期：${record.date}`;
+            const filename = `records/${studentName}.txt`;
+            const encodedContent = btoa(unescape(encodeURIComponent(content)));
+
+            try {
+                // 首先检查文件是否存在
+                const checkResponse = await fetch(
+                    `https://api.github.com/repos/${GITHUB_CONFIG.owner}/${GITHUB_CONFIG.repo}/contents/${filename}`,
+                    {
+                        headers: {
+                            'Authorization': `token ${GITHUB_CONFIG.token}`,
+                            'Accept': 'application/vnd.github.v3+json'
+                        }
+                    }
+                );
+
+                let sha = null;
+                if (checkResponse.status === 200) {
+                    const fileData = await checkResponse.json();
+                    sha = fileData.sha;
+                }
+
+                // 创建或更新文件
+                const response = await fetch(
+                    `https://api.github.com/repos/${GITHUB_CONFIG.owner}/${GITHUB_CONFIG.repo}/contents/${filename}`,
+                    {
+                        method: 'PUT',
+                        headers: {
+                            'Authorization': `token ${GITHUB_CONFIG.token}`,
+                            'Accept': 'application/vnd.github.v3+json',
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({
+                            message: `更新 ${studentName} 的分数`,
+                            content: encodedContent,
+                            sha: sha
+                        })
+                    }
+                );
+
+                if (response.ok) {
+                    showSaveStatus(true, '分数已保存到GitHub仓库！');
+                    return true;
+                } else {
+                    const error = await response.json();
+                    showSaveStatus(false, `保存失败: ${error.message}`);
+                    return false;
+                }
+            } catch (error) {
+                showSaveStatus(false, `网络错误: ${error.message}`);
+                return false;
+            }
+        }
+
+        // 显示保存状态
+        function showSaveStatus(success, message) {
+            const statusElement = document.getElementById('saveStatus');
+            statusElement.textContent = message;
+            statusElement.style.color = success ? '#4caf50' : '#f44336';
+            statusElement.style.display = 'block';
+            
+            setTimeout(() => {
+                statusElement.style.display = 'none';
+            }, 5000);
         }
 
         // 初始化
@@ -706,20 +802,9 @@
                     return;
                 }
                 
-                // 创建记录
-                const record = {
-                    name: selectedStudent,
-                    score: score,
-                    date: new Date().toLocaleString()
-                };
+                // 保存到GitHub
+                saveScoreToGitHub(selectedStudent, score);
                 
-                // 模拟保存到文件
-                console.log(`保存记录到 records/${selectedStudent}.txt:`, record);
-                
-                // 在实际应用中，这里应该使用后端API保存文件
-                // 由于浏览器限制，无法直接保存到本地文件系统
-                
-                alert(`已为${selectedStudent}记录分数：${score}`);
                 document.getElementById('scoreInput').value = '';
                 document.getElementById('scoreSection').style.display = 'none';
             });
