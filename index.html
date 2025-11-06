@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>高等数学课堂提问计分系统</title>
+    <title>高等数学课堂随机提问系统</title>
     <style>
         * {
             margin: 0;
@@ -644,6 +644,13 @@
             color: #a3d9ff;
             font-size: 1.2rem;
         }
+
+        .error-message {
+            text-align: center;
+            padding: 20px;
+            color: #ff6b6b;
+            font-size: 1.1rem;
+        }
     </style>
 </head>
 <body>
@@ -744,8 +751,8 @@
 
         // GitHub配置（用户名和仓库名称在代码中设置）
         const GITHUB_CONFIG = {
-            owner: "YOUR_USERNAME",           // 替换为您的GitHub用户名
-            repo: "YOUR_REPO_NAME"            // 替换为您的仓库名称
+            owner: "QingYH",           // 替换为您的GitHub用户名
+            repo: "RandRoll"            // 替换为您的仓库名称
         };
 
         // 创建闪烁的星星
@@ -964,8 +971,7 @@
             const token = getGitHubToken();
             
             if (!token) {
-                alert('请先设置GitHub Token');
-                return null;
+                return { error: '请先设置GitHub Token' };
             }
 
             try {
@@ -981,10 +987,20 @@
                 );
 
                 if (!response.ok) {
-                    throw new Error('无法获取records目录');
+                    if (response.status === 404) {
+                        return { error: 'records目录不存在，请先创建records目录或保存一些分数数据' };
+                    }
+                    const errorData = await response.json();
+                    return { error: `GitHub API错误: ${errorData.message}` };
                 }
 
                 const files = await response.json();
+                
+                // 检查是否是空目录
+                if (!files || files.length === 0) {
+                    return { error: 'records目录为空，请先保存一些分数数据' };
+                }
+
                 const scoreMap = new Map();
 
                 // 处理每个文件
@@ -993,42 +1009,45 @@
                         try {
                             // 获取文件内容
                             const fileResponse = await fetch(file.download_url);
+                            if (!fileResponse.ok) {
+                                console.warn(`无法获取文件 ${file.name} 的内容`);
+                                continue;
+                            }
+                            
                             const content = await fileResponse.text();
+                            console.log(`处理文件 ${file.name}:`, content);
                             
                             // 按分隔符分割记录
                             const records = content.split('-'.repeat(30));
-                            let studentName = '';
+                            const fileNameStudent = file.name.replace('.txt', '');
                             
                             for (const record of records) {
                                 if (record.trim() === '') continue;
                                 
                                 const lines = record.split('\n');
                                 let score = 0;
-                                let currentName = '';
+                                let foundScore = false;
                                 
                                 for (const line of lines) {
                                     const trimmedLine = line.trim();
-                                    if (trimmedLine.startsWith('姓名：')) {
-                                        currentName = trimmedLine.replace('姓名：', '').trim();
-                                    } else if (trimmedLine.startsWith('分数：')) {
+                                    if (trimmedLine.startsWith('分数：')) {
                                         const scoreStr = trimmedLine.replace('分数：', '').trim();
                                         score = parseInt(scoreStr);
-                                        if (isNaN(score)) {
-                                            console.warn(`无效的分数: ${scoreStr}`);
-                                            score = 0;
+                                        if (!isNaN(score)) {
+                                            foundScore = true;
+                                            break;
                                         }
                                     }
                                 }
                                 
-                                // 使用文件名中的学生姓名作为主要标识
-                                const fileNameStudent = file.name.replace('.txt', '');
-                                if (currentName && !isNaN(score) && score !== 0) {
+                                if (foundScore && !isNaN(score)) {
                                     // 累加同一学生的所有分数
                                     if (scoreMap.has(fileNameStudent)) {
                                         scoreMap.set(fileNameStudent, scoreMap.get(fileNameStudent) + score);
                                     } else {
                                         scoreMap.set(fileNameStudent, score);
                                     }
+                                    console.log(`学生 ${fileNameStudent} 得分: ${score}, 当前总分: ${scoreMap.get(fileNameStudent)}`);
                                 }
                             }
                         } catch (fileError) {
@@ -1042,19 +1061,18 @@
                     .map(([name, totalScore]) => ({ name, totalScore }))
                     .sort((a, b) => b.totalScore - a.totalScore);
 
-                return scoreArray;
+                console.log('最终得分榜数据:', scoreArray);
+                return { data: scoreArray };
 
             } catch (error) {
                 console.error('获取得分榜数据失败:', error);
-                return null;
+                return { error: `网络错误: ${error.message}` };
             }
         }
 
         // 显示得分榜
         async function showScoreboard() {
             const modal = document.getElementById('scoreboardModal');
-            const scoreboardData = document.getElementById('scoreboardData');
-            
             modal.style.display = 'block';
             await updateScoreboardDisplay();
         }
@@ -1064,9 +1082,14 @@
             const scoreboardData = document.getElementById('scoreboardData');
             scoreboardData.innerHTML = '<div class="loading-message">正在加载得分数据...</div>';
             
-            const data = await getScoreboardData();
+            const result = await getScoreboardData();
             
-            if (data && data.length > 0) {
+            if (result.error) {
+                scoreboardData.innerHTML = `<div class="error-message">${result.error}</div>`;
+                return;
+            }
+            
+            if (result.data && result.data.length > 0) {
                 let html = `
                     <table class="scoreboard-table">
                         <thead>
@@ -1079,7 +1102,7 @@
                         <tbody>
                 `;
                 
-                data.forEach((item, index) => {
+                result.data.forEach((item, index) => {
                     html += `
                         <tr>
                             <td>${index + 1}</td>
@@ -1096,7 +1119,7 @@
                 
                 scoreboardData.innerHTML = html;
             } else {
-                scoreboardData.innerHTML = '<div class="loading-message">暂无得分数据或加载失败</div>';
+                scoreboardData.innerHTML = '<div class="loading-message">暂无得分数据</div>';
             }
         }
 
