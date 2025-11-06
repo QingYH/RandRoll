@@ -593,6 +593,20 @@
             color: #ffeb3b;
         }
 
+        .refresh-scoreboard {
+            background: linear-gradient(to right, #4caf50, #8bc34a);
+            border: none;
+            color: white;
+            padding: 8px 16px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-left: 10px;
+        }
+
+        .refresh-scoreboard:hover {
+            opacity: 0.9;
+        }
+
         .scoreboard-table {
             width: 100%;
             border-collapse: collapse;
@@ -637,7 +651,7 @@
     <div class="celebration" id="celebration"></div>
     
     <div class="container">
-        <h1>高等数学课堂提问系统</h1>
+        <h1>高等数学课堂提问计分系统</h1>
         
         <div class="password-section" id="passwordSection">
             <h2>请输入密码启动系统</h2>
@@ -702,7 +716,10 @@
         <div class="scoreboard-content">
             <div class="scoreboard-header">
                 <h2>学生得分榜</h2>
-                <button class="close-scoreboard" id="closeScoreboard">&times;</button>
+                <div>
+                    <button class="refresh-scoreboard" id="refreshScoreboard">刷新</button>
+                    <button class="close-scoreboard" id="closeScoreboard">&times;</button>
+                </div>
             </div>
             <div id="scoreboardData">
                 <div class="loading-message">正在加载得分数据...</div>
@@ -845,7 +862,7 @@
             }, 3000);
         }
 
-        // 保存分数到GitHub
+        // 保存分数到GitHub（追加模式）
         async function saveScoreToGitHub(studentName, score) {
             const token = getGitHubToken();
             
@@ -867,9 +884,7 @@
                 date: new Date().toLocaleString('zh-CN')
             };
             
-            const content = `姓名：${record.name}\n分数：${record.score}\n日期：${record.date}`;
             const filename = `records/${studentName}.txt`;
-            const encodedContent = btoa(unescape(encodeURIComponent(content)));
 
             try {
                 // 首先检查文件是否存在
@@ -884,11 +899,20 @@
                     }
                 );
 
+                let existingContent = '';
                 let sha = null;
+
                 if (checkResponse.status === 200) {
                     const fileData = await checkResponse.json();
                     sha = fileData.sha;
+                    // 解码现有内容
+                    existingContent = decodeURIComponent(escape(atob(fileData.content)));
                 }
+
+                // 构建新的文件内容（追加模式）
+                const newRecord = `姓名：${record.name}\n分数：${record.score}\n日期：${record.date}\n${'-'.repeat(30)}\n`;
+                const newContent = existingContent + newRecord;
+                const encodedContent = btoa(unescape(encodeURIComponent(newContent)));
 
                 // 创建或更新文件
                 const response = await fetch(
@@ -901,7 +925,7 @@
                             'Content-Type': 'application/json'
                         },
                         body: JSON.stringify({
-                            message: `更新 ${studentName} 的分数 - ${record.date}`,
+                            message: `为 ${studentName} 添加新分数 - ${record.date}`,
                             content: encodedContent,
                             sha: sha,
                             branch: 'main'
@@ -970,25 +994,31 @@
                         const fileResponse = await fetch(file.download_url);
                         const content = await fileResponse.text();
                         
-                        // 解析文件内容获取分数
-                        const lines = content.split('\n');
-                        let score = 0;
-                        let name = '';
+                        // 解析文件内容获取所有分数记录
+                        const records = content.split('-'.repeat(30) + '\n');
+                        let studentName = '';
                         
-                        for (const line of lines) {
-                            if (line.startsWith('姓名：')) {
-                                name = line.replace('姓名：', '').trim();
-                            } else if (line.startsWith('分数：')) {
-                                score = parseInt(line.replace('分数：', '').trim());
+                        for (const record of records) {
+                            if (record.trim() === '') continue;
+                            
+                            const lines = record.split('\n');
+                            let score = 0;
+                            
+                            for (const line of lines) {
+                                if (line.startsWith('姓名：')) {
+                                    studentName = line.replace('姓名：', '').trim();
+                                } else if (line.startsWith('分数：')) {
+                                    score = parseInt(line.replace('分数：', '').trim());
+                                }
                             }
-                        }
-                        
-                        if (name && !isNaN(score)) {
-                            // 累加同一学生的分数
-                            if (scoreMap.has(name)) {
-                                scoreMap.set(name, scoreMap.get(name) + score);
-                            } else {
-                                scoreMap.set(name, score);
+                            
+                            if (studentName && !isNaN(score)) {
+                                // 累加同一学生的所有分数
+                                if (scoreMap.has(studentName)) {
+                                    scoreMap.set(studentName, scoreMap.get(studentName) + score);
+                                } else {
+                                    scoreMap.set(studentName, score);
+                                }
                             }
                         }
                     }
@@ -1013,6 +1043,12 @@
             const scoreboardData = document.getElementById('scoreboardData');
             
             modal.style.display = 'block';
+            await updateScoreboardDisplay();
+        }
+
+        // 更新得分榜显示
+        async function updateScoreboardDisplay() {
+            const scoreboardData = document.getElementById('scoreboardData');
             scoreboardData.innerHTML = '<div class="loading-message">正在加载得分数据...</div>';
             
             const data = await getScoreboardData();
@@ -1090,6 +1126,7 @@
             
             // 得分榜功能
             document.getElementById('scoreboardBtn').addEventListener('click', showScoreboard);
+            document.getElementById('refreshScoreboard').addEventListener('click', updateScoreboardDisplay);
             document.getElementById('closeScoreboard').addEventListener('click', function() {
                 document.getElementById('scoreboardModal').style.display = 'none';
             });
