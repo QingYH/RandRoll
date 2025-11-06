@@ -722,7 +722,7 @@
     <div class="scoreboard-modal" id="scoreboardModal">
         <div class="scoreboard-content">
             <div class="scoreboard-header">
-                <h2>学生得分榜</h2>
+                <h2>得分榜</h2>
                 <div>
                     <button class="refresh-scoreboard" id="refreshScoreboard">刷新</button>
                     <button class="close-scoreboard" id="closeScoreboard">&times;</button>
@@ -896,7 +896,7 @@
             try {
                 // 首先检查文件是否存在
                 const checkResponse = await fetch(
-                    `https://api.github.com/repos/${GITHUB_CONFIG.owner}/${GITHUB_CONFIG.repo}/contents/${filename}`,
+                    `https://api.github.com/repos/${GITHUB_CONFIG.owner}/${GITHUB_CONFIG.repo}/contents/${encodeURIComponent(filename)}`,
                     {
                         method: 'GET',
                         headers: {
@@ -921,9 +921,9 @@
                 const newContent = existingContent + newRecord;
                 const encodedContent = btoa(unescape(encodeURIComponent(newContent)));
 
-                // 创建或更新文件
+                // 创建或更新文件 - 使用英文commit message避免编码问题
                 const response = await fetch(
-                    `https://api.github.com/repos/${GITHUB_CONFIG.owner}/${GITHUB_CONFIG.repo}/contents/${filename}`,
+                    `https://api.github.com/repos/${GITHUB_CONFIG.owner}/${GITHUB_CONFIG.repo}/contents/${encodeURIComponent(filename)}`,
                     {
                         method: 'PUT',
                         headers: {
@@ -932,7 +932,7 @@
                             'Content-Type': 'application/json'
                         },
                         body: JSON.stringify({
-                            message: `为 ${studentName} 添加新分数 - ${record.date}`,
+                            message: `Add score for ${studentName} - ${new Date().toISOString()}`,
                             content: encodedContent,
                             sha: sha,
                             branch: 'main'
@@ -975,9 +975,9 @@
             }
 
             try {
-                // 获取records目录下的所有文件
+                // 获取records目录下的所有文件 - 使用encodeURIComponent处理路径
                 const response = await fetch(
-                    `https://api.github.com/repos/${GITHUB_CONFIG.owner}/${GITHUB_CONFIG.repo}/contents/records`,
+                    `https://api.github.com/repos/${GITHUB_CONFIG.owner}/${GITHUB_CONFIG.repo}/contents/${encodeURIComponent('records')}`,
                     {
                         headers: {
                             'Authorization': `token ${token}`,
@@ -1126,11 +1126,6 @@
         // 初始化
         document.addEventListener('DOMContentLoaded', function() {
             createStars();
-            
-            // 网页关闭时清除Token
-            window.addEventListener('beforeunload', function() {
-                clearGitHubToken();
-            });
             
             // GitHub Token 设置功能
             const tokenSection = document.getElementById('githubTokenSection');
