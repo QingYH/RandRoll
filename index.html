@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>高等数学课堂随机提问系统</title>
+    <title>高等数学课堂提问计分系统</title>
     <style>
         * {
             margin: 0;
@@ -744,8 +744,8 @@
 
         // GitHub配置（用户名和仓库名称在代码中设置）
         const GITHUB_CONFIG = {
-            owner: "QingYH",           // 替换为您的GitHub用户名
-            repo: "RandRoll"            // 替换为您的仓库名称
+            owner: "YOUR_USERNAME",           // 替换为您的GitHub用户名
+            repo: "YOUR_REPO_NAME"            // 替换为您的仓库名称
         };
 
         // 创建闪烁的星星
@@ -990,36 +990,49 @@
                 // 处理每个文件
                 for (const file of files) {
                     if (file.name.endsWith('.txt')) {
-                        // 获取文件内容
-                        const fileResponse = await fetch(file.download_url);
-                        const content = await fileResponse.text();
-                        
-                        // 解析文件内容获取所有分数记录
-                        const records = content.split('-'.repeat(30) + '\n');
-                        let studentName = '';
-                        
-                        for (const record of records) {
-                            if (record.trim() === '') continue;
+                        try {
+                            // 获取文件内容
+                            const fileResponse = await fetch(file.download_url);
+                            const content = await fileResponse.text();
                             
-                            const lines = record.split('\n');
-                            let score = 0;
+                            // 按分隔符分割记录
+                            const records = content.split('-'.repeat(30));
+                            let studentName = '';
                             
-                            for (const line of lines) {
-                                if (line.startsWith('姓名：')) {
-                                    studentName = line.replace('姓名：', '').trim();
-                                } else if (line.startsWith('分数：')) {
-                                    score = parseInt(line.replace('分数：', '').trim());
+                            for (const record of records) {
+                                if (record.trim() === '') continue;
+                                
+                                const lines = record.split('\n');
+                                let score = 0;
+                                let currentName = '';
+                                
+                                for (const line of lines) {
+                                    const trimmedLine = line.trim();
+                                    if (trimmedLine.startsWith('姓名：')) {
+                                        currentName = trimmedLine.replace('姓名：', '').trim();
+                                    } else if (trimmedLine.startsWith('分数：')) {
+                                        const scoreStr = trimmedLine.replace('分数：', '').trim();
+                                        score = parseInt(scoreStr);
+                                        if (isNaN(score)) {
+                                            console.warn(`无效的分数: ${scoreStr}`);
+                                            score = 0;
+                                        }
+                                    }
+                                }
+                                
+                                // 使用文件名中的学生姓名作为主要标识
+                                const fileNameStudent = file.name.replace('.txt', '');
+                                if (currentName && !isNaN(score) && score !== 0) {
+                                    // 累加同一学生的所有分数
+                                    if (scoreMap.has(fileNameStudent)) {
+                                        scoreMap.set(fileNameStudent, scoreMap.get(fileNameStudent) + score);
+                                    } else {
+                                        scoreMap.set(fileNameStudent, score);
+                                    }
                                 }
                             }
-                            
-                            if (studentName && !isNaN(score)) {
-                                // 累加同一学生的所有分数
-                                if (scoreMap.has(studentName)) {
-                                    scoreMap.set(studentName, scoreMap.get(studentName) + score);
-                                } else {
-                                    scoreMap.set(studentName, score);
-                                }
-                            }
+                        } catch (fileError) {
+                            console.error(`处理文件 ${file.name} 时出错:`, fileError);
                         }
                     }
                 }
