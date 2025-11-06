@@ -13,142 +13,11 @@
         }
         
         body {
-            background: linear-gradient(135deg, #1e3c72, #2a5298);
+            background: linear-gradient(135deg, #0a0e2a, #1a2980);
             color: white;
             min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            padding: 20px;
             overflow-x: hidden;
-        }
-        
-        .container {
-            width: 100%;
-            max-width: 900px;
-            text-align: center;
-        }
-        
-        h1 {
-            margin: 20px 0;
-            font-size: 2.5rem;
-            text-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
-        }
-        
-        .password-section {
-            background: rgba(255, 255, 255, 0.1);
-            padding: 20px;
-            border-radius: 15px;
-            margin: 20px 0;
-            width: 100%;
-            max-width: 400px;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
-        }
-        
-        .password-input {
-            width: 100%;
-            padding: 12px;
-            margin: 15px 0;
-            border: none;
-            border-radius: 8px;
-            font-size: 1.1rem;
-            text-align: center;
-            background: rgba(255, 255, 255, 0.9);
-        }
-        
-        .btn {
-            background: #4a90e2;
-            color: white;
-            border: none;
-            padding: 12px 25px;
-            border-radius: 8px;
-            font-size: 1.1rem;
-            cursor: pointer;
-            transition: all 0.3s;
-            margin: 10px 5px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-        }
-        
-        .btn:hover {
-            background: #3a7bc8;
-            transform: translateY(-2px);
-        }
-        
-        .btn:active {
-            transform: translateY(1px);
-        }
-        
-        .btn-start {
-            background: #2ecc71;
-        }
-        
-        .btn-start:hover {
-            background: #27ae60;
-        }
-        
-        .btn-stop {
-            background: #e74c3c;
-        }
-        
-        .btn-stop:hover {
-            background: #c0392b;
-        }
-        
-        .main-section {
-            display: none;
-            width: 100%;
-        }
-        
-        .name-display {
-            font-size: 3.5rem;
-            font-weight: bold;
-            margin: 30px 0;
-            height: 120px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            text-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
-            transition: all 0.3s;
-        }
-        
-        .name-scroll {
-            font-size: 2rem;
-            height: 80px;
-            overflow: hidden;
-            margin: 20px 0;
-            background: rgba(255, 255, 255, 0.1);
-            border-radius: 10px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-        
-        .student-image {
-            width: 200px;
-            height: 200px;
-            border-radius: 50%;
-            object-fit: cover;
-            border: 5px solid white;
-            box-shadow: 0 0 20px rgba(255, 255, 255, 0.5);
-            margin: 20px auto;
-            display: none;
-            filter: brightness(1.1) contrast(1.1) saturate(1.2);
-        }
-        
-        .score-section {
-            margin: 30px 0;
-            display: none;
-        }
-        
-        .score-input {
-            width: 100px;
-            padding: 10px;
-            margin: 10px;
-            border: none;
-            border-radius: 8px;
-            font-size: 1.1rem;
-            text-align: center;
-            background: rgba(255, 255, 255, 0.9);
+            position: relative;
         }
         
         .stars {
@@ -157,148 +26,427 @@
             left: 0;
             width: 100%;
             height: 100%;
-            pointer-events: none;
             z-index: -1;
         }
         
         .star {
             position: absolute;
-            background: white;
+            background-color: white;
             border-radius: 50%;
-            animation: twinkle 2s infinite;
+            animation: twinkle 2s infinite alternate;
         }
         
         @keyframes twinkle {
-            0%, 100% { opacity: 0.2; }
-            50% { opacity: 1; }
+            0% { opacity: 0.2; }
+            100% { opacity: 1; }
         }
         
-        .confetti {
-            position: fixed;
-            width: 10px;
-            height: 10px;
-            background: #f00;
-            opacity: 0;
-        }
-        
-        .footer {
-            margin-top: 30px;
-            font-size: 0.9rem;
-            color: rgba(255, 255, 255, 0.7);
-        }
-        
-        .notification {
-            position: fixed;
-            top: 20px;
-            right: 20px;
-            background: rgba(46, 204, 113, 0.9);
-            color: white;
-            padding: 15px 20px;
-            border-radius: 8px;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
-            display: none;
-            z-index: 1000;
-        }
-        
-        .records-section {
-            margin-top: 30px;
-            width: 100%;
-            max-width: 600px;
-            background: rgba(255, 255, 255, 0.1);
-            border-radius: 10px;
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
             padding: 20px;
+            text-align: center;
+            position: relative;
+            z-index: 1;
+        }
+        
+        h1 {
+            font-size: 2.8rem;
+            margin-bottom: 20px;
+            text-shadow: 0 0 15px rgba(255, 255, 255, 0.7);
+            background: linear-gradient(to right, #4facfe, #00f2fe);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        .password-section {
+            background: rgba(255, 255, 255, 0.08);
+            padding: 40px;
+            border-radius: 20px;
+            margin-bottom: 30px;
+            box-shadow: 0 0 30px rgba(0, 0, 0, 0.3);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .password-section h2 {
+            margin-bottom: 25px;
+            font-size: 1.8rem;
+            color: #a3d9ff;
+        }
+        
+        .password-section input {
+            padding: 15px 25px;
+            font-size: 1.3rem;
+            border: none;
+            border-radius: 10px;
+            margin-right: 15px;
+            width: 300px;
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            transition: all 0.3s;
+        }
+        
+        .password-section input:focus {
+            outline: none;
+            border-color: #4facfe;
+            box-shadow: 0 0 15px rgba(79, 172, 254, 0.5);
+        }
+        
+        .password-section button {
+            padding: 15px 35px;
+            font-size: 1.3rem;
+            background: linear-gradient(to right, #4facfe, #00f2fe);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+        
+        .password-section button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+        }
+        
+        .main-content {
+            display: none;
+            background: rgba(255, 255, 255, 0.08);
+            padding: 40px;
+            border-radius: 20px;
+            box-shadow: 0 0 30px rgba(0, 0, 0, 0.3);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .image-container {
+            margin: 20px auto 40px;
+            position: relative;
+        }
+        
+        .student-image {
+            width: 220px;
+            height: 220px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 5px solid rgba(255, 255, 255, 0.3);
+            box-shadow: 0 0 40px rgba(79, 172, 254, 0.7);
+            display: none;
+            filter: brightness(1.2) contrast(1.1) saturate(1.3);
+            animation: imageGlow 2s infinite alternate;
+        }
+        
+        @keyframes imageGlow {
+            0% { box-shadow: 0 0 30px rgba(79, 172, 254, 0.5); }
+            100% { box-shadow: 0 0 50px rgba(79, 172, 254, 0.9); }
+        }
+        
+        .student-display {
+            height: 200px;
+            margin: 30px 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+            overflow: hidden;
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 20px;
+            padding: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .student-name {
+            font-size: 3.2rem;
+            font-weight: bold;
+            color: #ffffff;
+            transition: all 0.3s ease;
+            position: absolute;
+            width: 100%;
+            text-align: center;
+        }
+        
+        .student-name.rolling {
+            animation: rollEffect 0.1s linear infinite;
+        }
+        
+        @keyframes rollEffect {
+            0% {
+                transform: translateY(100%);
+                opacity: 0;
+            }
+            10% {
+                transform: translateY(0);
+                opacity: 1;
+            }
+            90% {
+                transform: translateY(0);
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(-100%);
+                opacity: 0;
+            }
+        }
+        
+        .student-name.selected {
+            color: #ffeb3b;
+            text-shadow: 0 0 20px rgba(255, 235, 59, 0.8);
+            animation: selectedEffect 3s infinite alternate;
+        }
+        
+        @keyframes selectedEffect {
+            0% {
+                transform: scale(0.95);
+                text-shadow: 0 0 15px rgba(255, 235, 59, 0.7);
+            }
+            100% {
+                transform: scale(1.05);
+                text-shadow: 0 0 25px rgba(255, 235, 59, 0.9);
+            }
+        }
+        
+        .controls {
+            margin: 40px 0 20px;
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+        
+        .controls button {
+            padding: 18px 40px;
+            font-size: 1.4rem;
+            background: linear-gradient(to right, #4facfe, #00f2fe);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+        
+        .controls button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+        }
+        
+        .controls button.stop {
+            background: linear-gradient(to right, #ff5e7d, #ff8a00);
+        }
+        
+        .controls button.specify {
+            background: linear-gradient(to right, #9c27b0, #e91e63);
+        }
+        
+        .specify-section {
+            margin-top: 30px;
+            display: none;
+            background: rgba(255, 255, 255, 0.1);
+            padding: 25px;
+            border-radius: 15px;
+        }
+        
+        .specify-section h3 {
+            margin-bottom: 20px;
+            font-size: 1.6rem;
+            color: #a3d9ff;
+        }
+        
+        .specify-section select {
+            padding: 12px 20px;
+            font-size: 1.3rem;
+            border: none;
+            border-radius: 8px;
+            margin-right: 15px;
+            width: 250px;
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        
+        .specify-section button {
+            padding: 12px 30px;
+            font-size: 1.3rem;
+            background: linear-gradient(to right, #9c27b0, #e91e63);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .specify-section button:hover {
+            transform: translateY(-2px);
+        }
+        
+        .score-section {
+            margin-top: 30px;
+            display: none;
+            background: rgba(255, 255, 255, 0.1);
+            padding: 25px;
+            border-radius: 15px;
+        }
+        
+        .score-section h3 {
+            margin-bottom: 20px;
+            font-size: 1.6rem;
+            color: #a3d9ff;
+        }
+        
+        .score-section input {
+            padding: 12px 20px;
+            font-size: 1.3rem;
+            border: none;
+            border-radius: 8px;
+            margin-right: 15px;
+            width: 180px;
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        
+        .score-section button {
+            padding: 12px 30px;
+            font-size: 1.3rem;
+            background: linear-gradient(to right, #4facfe, #00f2fe);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .score-section button:hover {
+            transform: translateY(-2px);
+        }
+        
+        .message {
+            font-size: 1.8rem;
+            margin: 25px 0;
+            color: #ffeb3b;
+            text-shadow: 0 0 10px rgba(255, 235, 59, 0.7);
+            animation: messagePulse 2s infinite alternate;
+        }
+        
+        @keyframes messagePulse {
+            0% { opacity: 0.8; }
+            100% { opacity: 1; }
+        }
+        
+        .celebration {
+            position: fixed;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            pointer-events: none;
+            z-index: 10;
             display: none;
         }
         
-        .records-list {
-            max-height: 300px;
-            overflow-y: auto;
-            margin-top: 15px;
-            text-align: left;
+        .firework {
+            position: absolute;
+            width: 5px;
+            height: 5px;
+            border-radius: 50%;
+            animation: firework 1.5s ease-out forwards;
         }
         
-        .record-item {
-            padding: 10px;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
-            display: flex;
-            justify-content: space-between;
+        @keyframes firework {
+            0% {
+                transform: translate(var(--x), var(--y));
+                width: 5px;
+                height: 5px;
+                opacity: 1;
+            }
+            50% {
+                width: 5px;
+                height: 5px;
+                opacity: 1;
+            }
+            100% {
+                width: 200px;
+                height: 200px;
+                opacity: 0;
+            }
         }
         
-        .record-item:last-child {
-            border-bottom: none;
+        .sparkle {
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill="yellow" d="M12,2L9,12L2,12L10,17L7,22L12,17L17,22L14,17L22,12L15,12L12,2Z"/></svg>') no-repeat center;
+            background-size: contain;
+            animation: sparkle 2s infinite alternate;
         }
         
-        .records-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 15px;
+        @keyframes sparkle {
+            0% { transform: scale(0.8) rotate(0deg); opacity: 0.7; }
+            100% { transform: scale(1.2) rotate(180deg); opacity: 1; }
         }
         
-        .file-handle-section {
-            margin-top: 20px;
-            padding: 15px;
-            background: rgba(255, 255, 255, 0.1);
-            border-radius: 10px;
+        .system-info {
+            margin-top: 30px;
+            font-size: 1rem;
+            color: rgba(255, 255, 255, 0.6);
         }
     </style>
 </head>
 <body>
     <div class="stars" id="stars"></div>
+    <div class="celebration" id="celebration"></div>
+    
     <div class="container">
         <h1>高等数学课堂随机提问系统</h1>
         
         <div class="password-section" id="passwordSection">
-            <h2>请输入密码进入系统</h2>
-            <input type="password" class="password-input" id="passwordInput" placeholder="请输入密码">
-            <button class="btn" id="loginBtn">进入系统</button>
+            <h2>请输入密码启动系统</h2>
+            <input type="password" id="passwordInput" placeholder="请输入密码">
+            <button id="submitPassword">确认</button>
         </div>
         
-        <div class="main-section" id="mainSection">
-            <div class="name-scroll" id="nameScroll">准备开始...</div>
-            <div class="name-display" id="nameDisplay">等待点名</div>
+        <div class="main-content" id="mainContent">
+            <div class="image-container">
+                <img class="student-image" id="studentImage" alt="学生头像">
+            </div>
             
-            <img class="student-image" id="studentImage" src="" alt="学生头像">
+            <div class="student-display">
+                <div class="student-name" id="studentName"></div>
+            </div>
+            
+            <div class="message" id="message"></div>
             
             <div class="controls">
-                <button class="btn btn-start" id="startBtn">开始点名</button>
-                <button class="btn btn-stop" id="stopBtn" disabled>停止点名</button>
-                <button class="btn" id="showRecordsBtn">查看记录</button>
+                <button id="startBtn">开始点名</button>
+                <button id="stopBtn" class="stop">停止点名</button>
+                <button id="specifyBtn" class="specify">指定学生</button>
+            </div>
+            
+            <div class="specify-section" id="specifySection">
+                <h3>请选择要指定的学生</h3>
+                <select id="studentSelect">
+                    <option value="">-- 请选择学生 --</option>
+                </select>
+                <button id="confirmSpecify">确认指定</button>
             </div>
             
             <div class="score-section" id="scoreSection">
-                <h3>请为 <span id="selectedStudentName"></span> 同学评分</h3>
-                <input type="number" class="score-input" id="scoreInput" min="-100" max="100" placeholder="分数">
-                <button class="btn" id="submitScoreBtn">提交分数</button>
+                <h3>请为 <span id="scoringStudent"></span> 同学打分</h3>
+                <input type="number" id="scoreInput" min="-100" max="100" placeholder="输入分数 (-100到100)">
+                <button id="submitScore">提交分数</button>
             </div>
             
-            <div class="file-handle-section">
-                <p>请选择record文件夹保存分数记录</p>
-                <button class="btn" id="selectFolderBtn">选择文件夹</button>
-                <span id="folderStatus" style="margin-left: 10px;">未选择</span>
+            <div class="system-info">
+                <p>系统提示：点击"开始点名"按钮开始随机选择学生，点击"停止点名"按钮可提前结束选择，点击"指定学生"按钮可手动选择学生</p>
             </div>
-            
-            <div class="records-section" id="recordsSection">
-                <div class="records-header">
-                    <h3>学生提问记录</h3>
-                    <button class="btn" id="closeRecordsBtn">关闭</button>
-                </div>
-                <div class="records-list" id="recordsList">
-                    <!-- 记录将在这里显示 -->
-                </div>
-            </div>
-        </div>
-        
-        <div class="footer">
-            <p>高等数学课堂 &copy; 2023</p>
         </div>
     </div>
-    
-    <div class="notification" id="notification">分数已保存！</div>
 
     <script>
         // 学生名单
-        const studentList = [
+        const students = [
             "徐若伽", "程子昂", "朱静蕾", "王硕", "邹健乐", "吴子涵", "张怡", "胡恒远", "夏天香", "谢涵",
             "朱芮", "李欣怡", "俞光燕", "郭英姿", "张天乐", "李乐乐", "李志豪", "杨硕", "杨鋆妍", "金宇",
             "胡文远", "胡雨欣", "常俊", "韦书成", "汤子扬", "阮家豪", "何俊杰", "单宇阳", "姚勇棋", "段海冰",
@@ -311,395 +459,270 @@
             "杨佳怡", "陈家乐", "明华东", "姚猛", "项可益", "湛益阳"
         ];
 
-        // 系统密码
-        const SYSTEM_PASSWORD = "123456";
-        
-        // DOM元素
-        const passwordSection = document.getElementById('passwordSection');
-        const mainSection = document.getElementById('mainSection');
-        const passwordInput = document.getElementById('passwordInput');
-        const loginBtn = document.getElementById('loginBtn');
-        const nameScroll = document.getElementById('nameScroll');
-        const nameDisplay = document.getElementById('nameDisplay');
-        const studentImage = document.getElementById('studentImage');
-        const startBtn = document.getElementById('startBtn');
-        const stopBtn = document.getElementById('stopBtn');
-        const scoreSection = document.getElementById('scoreSection');
-        const selectedStudentName = document.getElementById('selectedStudentName');
-        const scoreInput = document.getElementById('scoreInput');
-        const submitScoreBtn = document.getElementById('submitScoreBtn');
-        const starsContainer = document.getElementById('stars');
-        const notification = document.getElementById('notification');
-        const showRecordsBtn = document.getElementById('showRecordsBtn');
-        const recordsSection = document.getElementById('recordsSection');
-        const recordsList = document.getElementById('recordsList');
-        const closeRecordsBtn = document.getElementById('closeRecordsBtn');
-        const selectFolderBtn = document.getElementById('selectFolderBtn');
-        const folderStatus = document.getElementById('folderStatus');
-        
-        // 系统变量
-        let isRolling = false;
-        let rollInterval;
-        let selectedStudent = '';
-        let audioContext;
-        let backgroundMusic;
-        let scoreRecords = [];
-        let recordsFolderHandle = null;
-        
-        // 创建星星背景
+        // 创建闪烁的星星
         function createStars() {
-            for (let i = 0; i < 100; i++) {
+            const starsContainer = document.getElementById('stars');
+            const starCount = 150;
+            
+            for (let i = 0; i < starCount; i++) {
                 const star = document.createElement('div');
                 star.classList.add('star');
+                
+                // 随机位置和大小
+                const size = Math.random() * 3 + 1;
+                star.style.width = `${size}px`;
+                star.style.height = `${size}px`;
                 star.style.left = `${Math.random() * 100}%`;
                 star.style.top = `${Math.random() * 100}%`;
-                star.style.width = `${Math.random() * 3 + 1}px`;
-                star.style.height = star.style.width;
+                
+                // 随机动画延迟
                 star.style.animationDelay = `${Math.random() * 2}s`;
+                
                 starsContainer.appendChild(star);
             }
         }
-        
-        // 登录验证
-        loginBtn.addEventListener('click', function() {
-            if (passwordInput.value === SYSTEM_PASSWORD) {
-                passwordSection.style.display = 'none';
-                mainSection.style.display = 'block';
-                createStars();
-                loadScoreRecords();
-            } else {
-                alert('密码错误，请重新输入！');
-                passwordInput.value = '';
-            }
-        });
-        
-        // 按Enter键登录
-        passwordInput.addEventListener('keypress', function(e) {
-            if (e.key === 'Enter') {
-                loginBtn.click();
-            }
-        });
-        
-        // 选择文件夹
-        selectFolderBtn.addEventListener('click', async function() {
-            try {
-                // 使用File System Access API选择文件夹
-                if ('showDirectoryPicker' in window) {
-                    recordsFolderHandle = await window.showDirectoryPicker();
-                    folderStatus.textContent = `已选择: ${recordsFolderHandle.name}`;
-                    folderStatus.style.color = '#2ecc71';
-                    
-                    // 加载已有的分数记录
-                    await loadScoreRecords();
-                } else {
-                    alert('您的浏览器不支持文件系统访问API，请使用Chrome 86+或Edge 86+浏览器');
-                }
-            } catch (error) {
-                console.error('选择文件夹失败:', error);
-                if (error.name !== 'AbortError') {
-                    alert('选择文件夹失败，请重试');
-                }
-            }
-        });
-        
-        // 保存分数到文件
-        async function saveScoreToFile(studentName, score) {
-            if (!recordsFolderHandle) {
-                alert('请先选择record文件夹');
-                return;
-            }
+
+        // 创建烟花效果
+        function createFireworks() {
+            const celebration = document.getElementById('celebration');
+            celebration.style.display = 'block';
             
-            try {
-                const date = new Date().toLocaleString();
-                const content = `姓名: ${studentName}\n得分: ${score}\n日期: ${date}`;
-                
-                // 创建或获取文件
-                const fileHandle = await recordsFolderHandle.getFileHandle(`${studentName}.txt`, { create: true });
-                const writable = await fileHandle.createWritable();
-                
-                // 写入内容
-                await writable.write(content);
-                await writable.close();
-                
-                // 添加到记录列表
-                const record = {
-                    name: studentName,
-                    score: score,
-                    date: date
-                };
-                scoreRecords.push(record);
-                
-                // 显示通知
-                showNotification('分数已保存！');
-            } catch (error) {
-                console.error('保存文件失败:', error);
-                alert('保存文件失败，请重试');
-            }
-        }
-        
-        // 加载分数记录
-        async function loadScoreRecords() {
-            if (!recordsFolderHandle) return;
+            const colors = ['#ff0000', '#00ff00', '#0000ff', '#ffff00', '#ff00ff', '#00ffff'];
             
-            try {
-                scoreRecords = [];
-                
-                // 遍历文件夹中的所有文件
-                for await (const entry of recordsFolderHandle.values()) {
-                    if (entry.kind === 'file' && entry.name.endsWith('.txt')) {
-                        try {
-                            const file = await entry.getFile();
-                            const text = await file.text();
-                            
-                            // 解析文件内容
-                            const lines = text.split('\n');
-                            const name = lines[0].replace('姓名: ', '').trim();
-                            const score = lines[1].replace('得分: ', '').trim();
-                            const date = lines[2].replace('日期: ', '').trim();
-                            
-                            scoreRecords.push({
-                                name: name,
-                                score: score,
-                                date: date
-                            });
-                        } catch (error) {
-                            console.error(`读取文件 ${entry.name} 失败:`, error);
-                        }
-                    }
-                }
-                
-                // 按日期排序
-                scoreRecords.sort((a, b) => new Date(b.date) - new Date(a.date));
-            } catch (error) {
-                console.error('加载记录失败:', error);
-            }
-        }
-        
-        // 开始点名
-        startBtn.addEventListener('click', function() {
-            if (isRolling) return;
-            
-            isRolling = true;
-            startBtn.disabled = true;
-            stopBtn.disabled = false;
-            nameDisplay.textContent = '';
-            nameDisplay.style.fontSize = '2rem';
-            studentImage.style.display = 'none';
-            scoreSection.style.display = 'none';
-            recordsSection.style.display = 'none';
-            
-            // 播放背景音乐
-            playBackgroundMusic();
-            
-            // 开始滚动显示名字
-            let counter = 0;
-            rollInterval = setInterval(function() {
-                const randomIndex = Math.floor(Math.random() * studentList.length);
-                nameScroll.textContent = studentList[randomIndex];
-                counter++;
-                
-                // 4秒后自动停止
-                if (counter >= 40) {
-                    stopRolling();
-                }
-            }, 100);
-        });
-        
-        // 停止点名
-        stopBtn.addEventListener('click', function() {
-            stopRolling();
-        });
-        
-        // 停止滚动并选择学生
-        function stopRolling() {
-            if (!isRolling) return;
-            
-            clearInterval(rollInterval);
-            isRolling = false;
-            startBtn.disabled = false;
-            stopBtn.disabled = true;
-            
-            // 随机选择一名学生
-            const randomIndex = Math.floor(Math.random() * studentList.length);
-            selectedStudent = studentList[randomIndex];
-            
-            // 停止背景音乐
-            stopBackgroundMusic();
-            
-            // 显示选中的学生
-            nameScroll.textContent = '';
-            nameDisplay.textContent = selectedStudent;
-            nameDisplay.style.fontSize = '4rem';
-            
-            // 显示学生头像
-            studentImage.src = `images/${selectedStudent}.jpg`;
-            studentImage.style.display = 'block';
-            
-            // 创建庆祝效果
-            createCelebration();
-            
-            // 语音播报
-            speakText(`恭喜${selectedStudent}同学中奖啦`);
-            
-            // 3秒后显示评分界面
-            setTimeout(function() {
-                studentImage.style.display = 'none';
-                scoreSection.style.display = 'block';
-                selectedStudentName.textContent = selectedStudent;
-            }, 3000);
-        }
-        
-        // 播放背景音乐
-        function playBackgroundMusic() {
-            // 在实际应用中，这里应该播放指定的背景音乐
-            // backgroundMusic = new Audio('music/background.mp3');
-            // backgroundMusic.loop = true;
-            // backgroundMusic.play();
-            
-            // 由于安全限制，这里使用控制台输出代替
-            console.log('播放背景音乐: background.mp3');
-        }
-        
-        // 停止背景音乐
-        function stopBackgroundMusic() {
-            // 在实际应用中，这里应该停止背景音乐
-            // if (backgroundMusic) {
-            //     backgroundMusic.pause();
-            //     backgroundMusic.currentTime = 0;
-            // }
-            
-            console.log('停止背景音乐');
-        }
-        
-        // 语音播报
-        function speakText(text) {
-            if ('speechSynthesis' in window) {
-                const utterance = new SpeechSynthesisUtterance(text);
-                utterance.rate = 1.0;
-                utterance.pitch = 1.0;
-                utterance.volume = 1.0;
-                speechSynthesis.speak(utterance);
-            }
-        }
-        
-        // 创建庆祝效果（撒花、星星闪烁）
-        function createCelebration() {
-            // 创建彩色小星星
             for (let i = 0; i < 50; i++) {
                 setTimeout(() => {
-                    const star = document.createElement('div');
-                    star.classList.add('star');
-                    star.style.left = `${Math.random() * 100}%`;
-                    star.style.top = `${Math.random() * 100}%`;
-                    star.style.width = `${Math.random() * 5 + 3}px`;
-                    star.style.height = star.style.width;
-                    star.style.background = `hsl(${Math.random() * 360}, 100%, 50%)`;
-                    star.style.animation = `twinkle ${Math.random() * 1 + 0.5}s infinite`;
-                    document.body.appendChild(star);
+                    const firework = document.createElement('div');
+                    firework.classList.add('firework');
                     
-                    // 3秒后移除星星
+                    // 随机颜色
+                    const color = colors[Math.floor(Math.random() * colors.length)];
+                    firework.style.backgroundColor = color;
+                    
+                    // 随机位置
+                    const x = Math.random() * 100;
+                    const y = Math.random() * 100;
+                    firework.style.setProperty('--x', `${x}vw`);
+                    firework.style.setProperty('--y', `${y}vh`);
+                    
+                    // 随机大小和动画延迟
+                    firework.style.animationDelay = `${Math.random() * 0.5}s`;
+                    
+                    celebration.appendChild(firework);
+                    
+                    // 动画结束后移除元素
                     setTimeout(() => {
-                        star.remove();
-                    }, 3000);
-                }, i * 50);
+                        firework.remove();
+                    }, 1500);
+                }, i * 100);
             }
             
-            // 创建彩色纸屑
-            for (let i = 0; i < 100; i++) {
-                setTimeout(() => {
-                    const confetti = document.createElement('div');
-                    confetti.classList.add('confetti');
-                    confetti.style.left = `${Math.random() * 100}%`;
-                    confetti.style.top = `${Math.random() * 100}%`;
-                    confetti.style.background = `hsl(${Math.random() * 360}, 100%, 50%)`;
-                    confetti.style.opacity = '1';
-                    confetti.style.transform = `rotate(${Math.random() * 360}deg)`;
-                    document.body.appendChild(confetti);
-                    
-                    // 动画
-                    confetti.animate([
-                        { transform: `translateY(0) rotate(0deg)`, opacity: 1 },
-                        { transform: `translateY(${Math.random() * 200 + 100}px) rotate(${Math.random() * 360}deg)`, opacity: 0 }
-                    ], {
-                        duration: 2000,
-                        easing: 'cubic-bezier(0.215, 0.61, 0.355, 1)'
-                    });
-                    
-                    // 3秒后移除纸屑
-                    setTimeout(() => {
-                        confetti.remove();
-                    }, 3000);
-                }, i * 20);
-            }
-        }
-        
-        // 显示通知
-        function showNotification(message) {
-            notification.textContent = message;
-            notification.style.display = 'block';
-            
+            // 5秒后隐藏庆祝效果
             setTimeout(() => {
-                notification.style.display = 'none';
-            }, 3000);
+                celebration.style.display = 'none';
+            }, 5000);
         }
-        
-        // 显示记录
-        function displayRecords() {
-            recordsList.innerHTML = '';
+
+        // 创建闪烁的小星星效果
+        function createSparkles() {
+            const container = document.querySelector('.student-display');
+            const sparkleCount = 10;
             
-            if (scoreRecords.length === 0) {
-                recordsList.innerHTML = '<p>暂无记录</p>';
-                return;
+            for (let i = 0; i < sparkleCount; i++) {
+                const sparkle = document.createElement('div');
+                sparkle.classList.add('sparkle');
+                
+                // 随机位置
+                sparkle.style.left = `${Math.random() * 100}%`;
+                sparkle.style.top = `${Math.random() * 100}%`;
+                
+                // 随机动画延迟
+                sparkle.style.animationDelay = `${Math.random() * 2}s`;
+                
+                container.appendChild(sparkle);
+                
+                // 5秒后移除
+                setTimeout(() => {
+                    sparkle.remove();
+                }, 5000);
             }
+        }
+
+        // 初始化
+        document.addEventListener('DOMContentLoaded', function() {
+            createStars();
             
-            scoreRecords.forEach(record => {
-                const recordItem = document.createElement('div');
-                recordItem.className = 'record-item';
-                recordItem.innerHTML = `
-                    <div>
-                        <strong>${record.name}</strong>
-                        <div style="font-size: 0.8rem; color: rgba(255,255,255,0.7)">${record.date}</div>
-                    </div>
-                    <div style="font-weight: bold; font-size: 1.2rem">${record.score}</div>
-                `;
-                recordsList.appendChild(recordItem);
+            // 填充学生选择下拉框
+            const studentSelect = document.getElementById('studentSelect');
+            students.forEach(student => {
+                const option = document.createElement('option');
+                option.value = student;
+                option.textContent = student;
+                studentSelect.appendChild(option);
             });
-        }
-        
-        // 提交分数
-        submitScoreBtn.addEventListener('click', function() {
-            const score = scoreInput.value;
-            if (!score || score < -100 || score > 100) {
-                alert('请输入有效的分数（-100到100）');
-                return;
+            
+            // 密码验证 - 点击确认按钮
+            document.getElementById('submitPassword').addEventListener('click', function() {
+                checkPassword();
+            });
+            
+            // 密码验证 - 按回车键
+            document.getElementById('passwordInput').addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    checkPassword();
+                }
+            });
+            
+            function checkPassword() {
+                const password = document.getElementById('passwordInput').value;
+                if (password === 'math123') {
+                    document.getElementById('passwordSection').style.display = 'none';
+                    document.getElementById('mainContent').style.display = 'block';
+                } else {
+                    alert('密码错误，请重新输入！');
+                    document.getElementById('passwordInput').value = '';
+                    document.getElementById('passwordInput').focus();
+                }
             }
             
-            // 保存分数到文件
-            saveScoreToFile(selectedStudent, score);
+            let isRolling = false;
+            let rollInterval;
+            let selectedStudent = '';
+            let audio;
             
-            // 重置界面
-            scoreInput.value = '';
-            scoreSection.style.display = 'none';
-            nameDisplay.textContent = '等待点名';
-            nameDisplay.style.fontSize = '3.5rem';
-        });
-        
-        // 按Enter键提交分数
-        scoreInput.addEventListener('keypress', function(e) {
-            if (e.key === 'Enter') {
-                submitScoreBtn.click();
+            // 开始点名
+            document.getElementById('startBtn').addEventListener('click', function() {
+                if (isRolling) return;
+                
+                isRolling = true;
+                document.getElementById('studentImage').style.display = 'none';
+                document.getElementById('message').textContent = '';
+                document.getElementById('scoreSection').style.display = 'none';
+                document.getElementById('specifySection').style.display = 'none';
+                
+                const studentNameElement = document.getElementById('studentName');
+                studentNameElement.classList.remove('selected');
+                studentNameElement.classList.add('rolling');
+                
+                // 播放背景音乐
+                audio = new Audio('music/background.mp3');
+                audio.loop = true;
+                audio.play().catch(e => console.log('音频播放失败:', e));
+                
+                // 擦除式滚动效果
+                let currentIndex = 0;
+                
+                rollInterval = setInterval(() => {
+                    studentNameElement.textContent = students[currentIndex];
+                    currentIndex = (currentIndex + 1) % students.length;
+                }, 100);
+                
+                // 4秒后停止
+                setTimeout(() => {
+                    stopRolling();
+                }, 4000);
+            });
+            
+            // 停止点名
+            document.getElementById('stopBtn').addEventListener('click', function() {
+                if (!isRolling) return;
+                stopRolling();
+            });
+            
+            // 指定学生
+            document.getElementById('specifyBtn').addEventListener('click', function() {
+                document.getElementById('specifySection').style.display = 'block';
+                document.getElementById('scoreSection').style.display = 'none';
+            });
+            
+            // 确认指定学生
+            document.getElementById('confirmSpecify').addEventListener('click', function() {
+                const selected = document.getElementById('studentSelect').value;
+                if (!selected) {
+                    alert('请选择一名学生！');
+                    return;
+                }
+                
+                selectStudent(selected);
+                document.getElementById('specifySection').style.display = 'none';
+            });
+            
+            function stopRolling() {
+                clearInterval(rollInterval);
+                isRolling = false;
+                
+                const studentNameElement = document.getElementById('studentName');
+                studentNameElement.classList.remove('rolling');
+                
+                // 随机选择学生
+                selectedStudent = students[Math.floor(Math.random() * students.length)];
+                selectStudent(selectedStudent);
             }
-        });
-        
-        // 显示记录
-        showRecordsBtn.addEventListener('click', function() {
-            displayRecords();
-            recordsSection.style.display = 'block';
-        });
-        
-        // 关闭记录
-        closeRecordsBtn.addEventListener('click', function() {
-            recordsSection.style.display = 'none';
+            
+            function selectStudent(student) {
+                selectedStudent = student;
+                const studentNameElement = document.getElementById('studentName');
+                studentNameElement.textContent = selectedStudent;
+                studentNameElement.classList.add('selected');
+                
+                // 停止音乐
+                if (audio) {
+                    audio.pause();
+                    audio.currentTime = 0;
+                }
+                
+                // 显示学生头像
+                const studentImage = document.getElementById('studentImage');
+                studentImage.src = `images/${selectedStudent}.jpg`;
+                studentImage.style.display = 'block';
+                
+                // 创建庆祝效果
+                createFireworks();
+                createSparkles();
+                
+                // 显示消息
+                document.getElementById('message').textContent = `恭喜${selectedStudent}同学中奖啦！`;
+                
+                // 语音播报
+                const speech = new SpeechSynthesisUtterance(`恭喜${selectedStudent}同学中奖啦`);
+                speech.lang = 'zh-CN';
+                speech.rate = 1.0;
+                speech.pitch = 1.0;
+                window.speechSynthesis.speak(speech);
+                
+                // 5秒后隐藏头像
+                setTimeout(() => {
+                    studentImage.style.display = 'none';
+                    document.getElementById('scoreSection').style.display = 'block';
+                    document.getElementById('scoringStudent').textContent = selectedStudent;
+                }, 5000);
+            }
+            
+            // 提交分数
+            document.getElementById('submitScore').addEventListener('click', function() {
+                const score = document.getElementById('scoreInput').value;
+                
+                if (score === '' || score < -100 || score > 100) {
+                    alert('请输入-100到100之间的分数！');
+                    return;
+                }
+                
+                // 创建记录
+                const record = {
+                    name: selectedStudent,
+                    score: score,
+                    date: new Date().toLocaleString()
+                };
+                
+                // 模拟保存到文件
+                console.log(`保存记录到 records/${selectedStudent}.txt:`, record);
+                
+                // 在实际应用中，这里应该使用后端API保存文件
+                // 由于浏览器限制，无法直接保存到本地文件系统
+                
+                alert(`已为${selectedStudent}记录分数：${score}`);
+                document.getElementById('scoreInput').value = '';
+                document.getElementById('scoreSection').style.display = 'none';
+            });
         });
     </script>
 </body>
