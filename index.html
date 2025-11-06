@@ -124,23 +124,68 @@
         .image-container {
             margin: 20px auto 40px;
             position: relative;
+            width: 250px;
+            height: 250px;
         }
         
         .student-image {
-            width: 220px;
-            height: 220px;
+            width: 100%;
+            height: 100%;
             border-radius: 50%;
             object-fit: cover;
             border: 5px solid rgba(255, 255, 255, 0.3);
             box-shadow: 0 0 40px rgba(79, 172, 254, 0.7);
             display: none;
-            filter: brightness(1.2) contrast(1.1) saturate(1.3);
+            /* 美颜增白滤镜效果 */
+            filter: 
+                brightness(1.2) 
+                contrast(1.15) 
+                saturate(1.25)
+                hue-rotate(-5deg)
+                sepia(0.05);
             animation: imageGlow 2s infinite alternate;
+            position: relative;
+            z-index: 2;
+        }
+        
+        /* 添加柔光效果层 */
+        .image-container::before {
+            content: '';
+            position: absolute;
+            top: -10px;
+            left: -10px;
+            right: -10px;
+            bottom: -10px;
+            background: radial-gradient(circle at center, rgba(255,255,255,0.4) 0%, transparent 70%);
+            border-radius: 50%;
+            z-index: 1;
+            opacity: 0;
+            transition: opacity 0.5s ease;
+        }
+        
+        .student-image.active + .image-container::before {
+            opacity: 1;
         }
         
         @keyframes imageGlow {
-            0% { box-shadow: 0 0 30px rgba(79, 172, 254, 0.5); }
-            100% { box-shadow: 0 0 50px rgba(79, 172, 254, 0.9); }
+            0% { 
+                box-shadow: 0 0 30px rgba(79, 172, 254, 0.5);
+                filter: 
+                    brightness(1.2) 
+                    contrast(1.15) 
+                    saturate(1.25)
+                    hue-rotate(-5deg)
+                    sepia(0.05);
+            }
+            100% { 
+                box-shadow: 0 0 50px rgba(79, 172, 254, 0.9);
+                filter: 
+                    brightness(1.25) 
+                    contrast(1.2) 
+                    saturate(1.3)
+                    hue-rotate(-5deg)
+                    sepia(0.08);
+            }
         }
         
         .student-display {
@@ -399,6 +444,91 @@
             color: #4caf50;
             display: none;
         }
+
+        /* GitHub Token 设置区域 */
+        .github-token-section {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: rgba(0, 0, 0, 0.8);
+            padding: 15px;
+            border-radius: 10px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(10px);
+            z-index: 100;
+            width: 300px;
+            transition: all 0.3s ease;
+        }
+
+        .github-token-section.collapsed {
+            width: 50px;
+            height: 50px;
+            overflow: hidden;
+        }
+
+        .github-token-section.collapsed .token-content {
+            display: none;
+        }
+
+        .token-toggle {
+            position: absolute;
+            top: 5px;
+            right: 5px;
+            background: rgba(255, 255, 255, 0.1);
+            border: none;
+            color: white;
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            cursor: pointer;
+            font-size: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .token-toggle:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        .token-content h4 {
+            margin-bottom: 10px;
+            color: #a3d9ff;
+            font-size: 0.9rem;
+        }
+
+        .token-content input {
+            width: 100%;
+            padding: 8px;
+            margin-bottom: 10px;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 5px;
+            color: white;
+            font-size: 0.8rem;
+        }
+
+        .token-content button {
+            width: 100%;
+            padding: 8px;
+            background: linear-gradient(to right, #4facfe, #00f2fe);
+            border: none;
+            border-radius: 5px;
+            color: white;
+            cursor: pointer;
+            font-size: 0.8rem;
+        }
+
+        .token-content button:hover {
+            opacity: 0.9;
+        }
+
+        .token-status {
+            margin-top: 8px;
+            font-size: 0.7rem;
+            color: #4caf50;
+            display: none;
+        }
     </style>
 </head>
 <body>
@@ -406,7 +536,7 @@
     <div class="celebration" id="celebration"></div>
     
     <div class="container">
-        <h1>高等数学课堂随机提问系统</h1>
+        <h1>高等数学课堂提问系统</h1>
         
         <div class="password-section" id="passwordSection">
             <h2>请输入密码启动系统</h2>
@@ -449,7 +579,19 @@
             <div class="system-info">
                 <p>系统提示：点击"开始点名"按钮开始随机选择学生，点击"停止点名"按钮可提前结束选择，点击"指定学生"按钮可手动选择学生</p>
                 <p style="margin-top: 10px; color: #4caf50;">分数将自动保存到GitHub仓库的records目录</p>
+                <p style="margin-top: 5px; color: #ff9800;">2025级高数B3班专享</p>
             </div>
+        </div>
+    </div>
+
+    <!-- GitHub Token 设置区域 -->
+    <div class="github-token-section collapsed" id="githubTokenSection">
+        <button class="token-toggle" id="tokenToggle">⚙️</button>
+        <div class="token-content">
+            <h4>GitHub Token 设置</h4>
+            <input type="password" id="githubTokenInput" placeholder="输入 GitHub Token">
+            <button id="saveToken">保存 Token</button>
+            <div class="token-status" id="tokenStatus">Token 已保存</div>
         </div>
     </div>
 
@@ -468,11 +610,10 @@
             "杨佳怡", "陈家乐", "明华东", "姚猛", "项可益", "湛益阳"
         ];
 
-        // GitHub配置（请在此处修改为您的实际配置）
+        // GitHub配置（用户名和仓库名称在代码中设置）
         const GITHUB_CONFIG = {
-            token: "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",  // 替换为您的GitHub Personal Access Token
-            owner: "QingYH",           // 替换为您的GitHub用户名
-            repo: "RandRoll"            // 替换为您的仓库名称
+            owner: "YOUR_USERNAME",           // 替换为您的GitHub用户名
+            repo: "YOUR_REPO_NAME"            // 替换为您的仓库名称
         };
 
         // 创建闪烁的星星
@@ -563,10 +704,39 @@
             }
         }
 
+        // 获取保存的GitHub Token
+        function getGitHubToken() {
+            return localStorage.getItem('githubToken');
+        }
+
+        // 保存GitHub Token
+        function saveGitHubToken(token) {
+            localStorage.setItem('githubToken', token);
+            showTokenStatus('Token 已保存');
+        }
+
+        // 显示Token状态
+        function showTokenStatus(message) {
+            const statusElement = document.getElementById('tokenStatus');
+            statusElement.textContent = message;
+            statusElement.style.display = 'block';
+            setTimeout(() => {
+                statusElement.style.display = 'none';
+            }, 3000);
+        }
+
         // 保存分数到GitHub
         async function saveScoreToGitHub(studentName, score) {
+            const token = getGitHubToken();
+            
             // 检查GitHub配置是否完整
-            if (!GITHUB_CONFIG.token || !GITHUB_CONFIG.owner || !GITHUB_CONFIG.repo) {
+            if (!token) {
+                showSaveStatus(false, '请先设置GitHub Token');
+                return false;
+            }
+
+            if (!GITHUB_CONFIG.owner || GITHUB_CONFIG.owner === "YOUR_USERNAME" || 
+                !GITHUB_CONFIG.repo || GITHUB_CONFIG.repo === "YOUR_REPO_NAME") {
                 showSaveStatus(false, 'GitHub配置不完整，请检查代码中的GITHUB_CONFIG');
                 return false;
             }
@@ -574,7 +744,7 @@
             const record = {
                 name: studentName,
                 score: score,
-                date: new Date().toLocaleString()
+                date: new Date().toLocaleString('zh-CN')
             };
             
             const content = `姓名：${record.name}\n分数：${record.score}\n日期：${record.date}`;
@@ -586,8 +756,9 @@
                 const checkResponse = await fetch(
                     `https://api.github.com/repos/${GITHUB_CONFIG.owner}/${GITHUB_CONFIG.repo}/contents/${filename}`,
                     {
+                        method: 'GET',
                         headers: {
-                            'Authorization': `token ${GITHUB_CONFIG.token}`,
+                            'Authorization': `token ${token}`,
                             'Accept': 'application/vnd.github.v3+json'
                         }
                     }
@@ -605,14 +776,15 @@
                     {
                         method: 'PUT',
                         headers: {
-                            'Authorization': `token ${GITHUB_CONFIG.token}`,
+                            'Authorization': `token ${token}`,
                             'Accept': 'application/vnd.github.v3+json',
                             'Content-Type': 'application/json'
                         },
                         body: JSON.stringify({
-                            message: `更新 ${studentName} 的分数`,
+                            message: `更新 ${studentName} 的分数 - ${record.date}`,
                             content: encodedContent,
-                            sha: sha
+                            sha: sha,
+                            branch: 'main'
                         })
                     }
                 );
@@ -646,6 +818,34 @@
         // 初始化
         document.addEventListener('DOMContentLoaded', function() {
             createStars();
+            
+            // GitHub Token 设置功能
+            const tokenSection = document.getElementById('githubTokenSection');
+            const tokenToggle = document.getElementById('tokenToggle');
+            const saveTokenBtn = document.getElementById('saveToken');
+            
+            // 切换Token设置面板
+            tokenToggle.addEventListener('click', function() {
+                tokenSection.classList.toggle('collapsed');
+            });
+            
+            // 保存Token
+            saveTokenBtn.addEventListener('click', function() {
+                const token = document.getElementById('githubTokenInput').value;
+                if (token) {
+                    saveGitHubToken(token);
+                    document.getElementById('githubTokenInput').value = '';
+                    tokenSection.classList.add('collapsed');
+                } else {
+                    showTokenStatus('请输入Token');
+                }
+            });
+            
+            // 加载已保存的Token
+            const savedToken = getGitHubToken();
+            if (savedToken) {
+                showTokenStatus('Token 已加载');
+            }
             
             // 填充学生选择下拉框
             const studentSelect = document.getElementById('studentSelect');
@@ -766,10 +966,11 @@
                     audio.currentTime = 0;
                 }
                 
-                // 显示学生头像
+                // 显示学生头像并应用美颜效果
                 const studentImage = document.getElementById('studentImage');
                 studentImage.src = `images/${selectedStudent}.jpg`;
                 studentImage.style.display = 'block';
+                studentImage.classList.add('active');
                 
                 // 创建庆祝效果
                 createFireworks();
@@ -788,6 +989,7 @@
                 // 5秒后隐藏头像
                 setTimeout(() => {
                     studentImage.style.display = 'none';
+                    studentImage.classList.remove('active');
                     document.getElementById('scoreSection').style.display = 'block';
                     document.getElementById('scoringStudent').textContent = selectedStudent;
                 }, 5000);
