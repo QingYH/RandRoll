@@ -124,8 +124,8 @@
         .image-container {
             margin: 20px auto 40px;
             position: relative;
-            width: 250px;
-            height: 250px;
+            width: 320px;
+            height: 320px;
         }
         
         .student-image {
@@ -136,13 +136,13 @@
             border: 5px solid rgba(255, 255, 255, 0.3);
             box-shadow: 0 0 40px rgba(79, 172, 254, 0.7);
             display: none;
-            /* 美颜增白滤镜效果 */
+            /* 优化美颜增白滤镜效果 */
             filter: 
-                brightness(1.2) 
-                contrast(1.15) 
-                saturate(1.25)
-                hue-rotate(-5deg)
-                sepia(0.05);
+                brightness(1.1) 
+                contrast(1.05) 
+                saturate(1.1)
+                hue-rotate(-2deg)
+                sepia(0.03);
             animation: imageGlow 2s infinite alternate;
             position: relative;
             z-index: 2;
@@ -152,11 +152,11 @@
         .image-container::before {
             content: '';
             position: absolute;
-            top: -10px;
-            left: -10px;
-            right: -10px;
-            bottom: -10px;
-            background: radial-gradient(circle at center, rgba(255,255,255,0.4) 0%, transparent 70%);
+            top: -15px;
+            left: -15px;
+            right: -15px;
+            bottom: -15px;
+            background: radial-gradient(circle at center, rgba(255,255,255,0.3) 0%, transparent 70%);
             border-radius: 50%;
             z-index: 1;
             opacity: 0;
@@ -171,20 +171,20 @@
             0% { 
                 box-shadow: 0 0 30px rgba(79, 172, 254, 0.5);
                 filter: 
-                    brightness(1.2) 
-                    contrast(1.15) 
-                    saturate(1.25)
-                    hue-rotate(-5deg)
-                    sepia(0.05);
+                    brightness(1.1) 
+                    contrast(1.05) 
+                    saturate(1.1)
+                    hue-rotate(-2deg)
+                    sepia(0.03);
             }
             100% { 
                 box-shadow: 0 0 50px rgba(79, 172, 254, 0.9);
                 filter: 
-                    brightness(1.25) 
-                    contrast(1.2) 
-                    saturate(1.3)
-                    hue-rotate(-5deg)
-                    sepia(0.08);
+                    brightness(1.15) 
+                    contrast(1.1) 
+                    saturate(1.15)
+                    hue-rotate(-2deg)
+                    sepia(0.05);
             }
         }
         
@@ -657,11 +657,24 @@
             display: none;
         }
         
-        /* 得分榜预加载状态 */
-        .scoreboard-preload-status {
-            margin-top: 10px;
+        /* 预加载状态信息 */
+        .preload-status {
+            margin-top: 15px;
             font-size: 0.9rem;
-            color: #a3d9ff;
+            color: rgba(255, 255, 255, 0.4);
+            text-align: center;
+        }
+        
+        .preload-status .success {
+            color: rgba(76, 175, 80, 0.7);
+        }
+        
+        .preload-status .loading {
+            color: rgba(255, 152, 0, 0.7);
+        }
+        
+        .preload-status .error {
+            color: rgba(244, 67, 54, 0.7);
         }
     </style>
 </head>
@@ -715,7 +728,10 @@
                 <p>系统提示：点击"开始点名"按钮开始随机选择学生，点击"停止点名"按钮可提前结束选择，点击"指定学生"按钮可手动选择学生</p>
                 <p style="margin-top: 10px; color: #4caf50;">分数将自动保存到远程服务器</p>
                 <p style="margin-top: 5px; color: #ff9800;">2025级高数B3班专享</p>
-                <div class="scoreboard-preload-status" id="scoreboardPreloadStatus">得分榜数据：未加载</div>
+                <div class="preload-status" id="preloadStatus">
+                    <div>头像预加载：<span id="imagePreloadStatus">未开始</span></div>
+                    <div>得分榜预加载：<span id="scoreboardPreloadStatus">未开始</span></div>
+                </div>
             </div>
         </div>
     </div>
@@ -1098,26 +1114,26 @@
         // 更新得分榜缓存
         async function updateScoreboardCache() {
             const statusElement = document.getElementById('scoreboardPreloadStatus');
-            statusElement.textContent = '得分榜数据：正在更新...';
-            statusElement.style.color = '#ff9800';
+            statusElement.textContent = '正在更新...';
+            statusElement.className = 'loading';
             
             try {
                 const result = await getScoreboardData();
                 
                 if (result.error) {
                     scoreboardDataCache = null;
-                    statusElement.textContent = `得分榜数据：加载失败 - ${result.error}`;
-                    statusElement.style.color = '#f44336';
+                    statusElement.textContent = `加载失败 - ${result.error}`;
+                    statusElement.className = 'error';
                 } else {
                     scoreboardDataCache = result.data;
                     lastScoreboardUpdate = Date.now();
-                    statusElement.textContent = `得分榜数据：已加载 (${result.data.length}名学生)`;
-                    statusElement.style.color = '#4caf50';
+                    statusElement.textContent = `已加载 (${result.data.length}名学生)`;
+                    statusElement.className = 'success';
                 }
             } catch (error) {
                 scoreboardDataCache = null;
-                statusElement.textContent = `得分榜数据：加载失败 - ${error.message}`;
-                statusElement.style.color = '#f44336';
+                statusElement.textContent = `加载失败 - ${error.message}`;
+                statusElement.className = 'error';
             }
         }
 
@@ -1198,16 +1214,46 @@
 
         // 预加载所有学生头像
         function preloadStudentImages() {
+            const statusElement = document.getElementById('imagePreloadStatus');
+            statusElement.textContent = '正在加载...';
+            statusElement.className = 'loading';
+            
             const preloadContainer = document.getElementById('imagePreload');
+            let loadedCount = 0;
+            let errorCount = 0;
             
             students.forEach(student => {
                 const img = new Image();
                 img.src = `images/${student}.jpg`;
                 img.alt = `${student}的头像`;
+                
+                img.onload = function() {
+                    loadedCount++;
+                    updatePreloadStatus(loadedCount, errorCount);
+                };
+                
+                img.onerror = function() {
+                    errorCount++;
+                    updatePreloadStatus(loadedCount, errorCount);
+                };
+                
                 preloadContainer.appendChild(img);
             });
             
-            console.log('所有学生头像已预加载');
+            function updatePreloadStatus(loaded, errors) {
+                if (loaded + errors === students.length) {
+                    if (errors === 0) {
+                        statusElement.textContent = `已加载 ${loaded} 个头像`;
+                        statusElement.className = 'success';
+                    } else {
+                        statusElement.textContent = `已加载 ${loaded} 个头像，${errors} 个失败`;
+                        statusElement.className = 'error';
+                    }
+                } else {
+                    statusElement.textContent = `正在加载... (${loaded + errors}/${students.length})`;
+                    statusElement.className = 'loading';
+                }
+            }
         }
 
         // 初始化
