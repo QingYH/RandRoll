@@ -656,6 +656,13 @@
         .image-preload {
             display: none;
         }
+        
+        /* 得分榜预加载状态 */
+        .scoreboard-preload-status {
+            margin-top: 10px;
+            font-size: 0.9rem;
+            color: #a3d9ff;
+        }
     </style>
 </head>
 <body>
@@ -708,6 +715,7 @@
                 <p>系统提示：点击"开始点名"按钮开始随机选择学生，点击"停止点名"按钮可提前结束选择，点击"指定学生"按钮可手动选择学生</p>
                 <p style="margin-top: 10px; color: #4caf50;">分数将自动保存到远程服务器</p>
                 <p style="margin-top: 5px; color: #ff9800;">2025级高数B3班专享</p>
+                <div class="scoreboard-preload-status" id="scoreboardPreloadStatus">得分榜数据：未加载</div>
             </div>
         </div>
     </div>
@@ -762,6 +770,11 @@
             owner: "QingYH",           // 替换为您的GitHub用户名
             repo: "RandRoll"            // 替换为您的仓库名称
         };
+
+        // 全局变量 - 存储得分榜数据
+        let scoreboardDataCache = null;
+        let lastScoreboardUpdate = 0;
+        const SCOREBOARD_CACHE_DURATION = 30000; // 30秒缓存
 
         // 创建闪烁的星星
         function createStars() {
@@ -950,6 +963,10 @@
 
                 if (response.ok) {
                     showSaveStatus(true, '分数已保存到GitHub仓库！');
+                    
+                    // 分数保存成功后，立即更新得分榜缓存
+                    updateScoreboardCache();
+                    
                     return true;
                 } else {
                     const error = await response.json();
@@ -1078,16 +1095,57 @@
             }
         }
 
+        // 更新得分榜缓存
+        async function updateScoreboardCache() {
+            const statusElement = document.getElementById('scoreboardPreloadStatus');
+            statusElement.textContent = '得分榜数据：正在更新...';
+            statusElement.style.color = '#ff9800';
+            
+            try {
+                const result = await getScoreboardData();
+                
+                if (result.error) {
+                    scoreboardDataCache = null;
+                    statusElement.textContent = `得分榜数据：加载失败 - ${result.error}`;
+                    statusElement.style.color = '#f44336';
+                } else {
+                    scoreboardDataCache = result.data;
+                    lastScoreboardUpdate = Date.now();
+                    statusElement.textContent = `得分榜数据：已加载 (${result.data.length}名学生)`;
+                    statusElement.style.color = '#4caf50';
+                }
+            } catch (error) {
+                scoreboardDataCache = null;
+                statusElement.textContent = `得分榜数据：加载失败 - ${error.message}`;
+                statusElement.style.color = '#f44336';
+            }
+        }
+
         // 显示得分榜
         async function showScoreboard() {
             const modal = document.getElementById('scoreboardModal');
             modal.style.display = 'block';
+            
+            // 如果缓存超过30秒，则重新加载
+            const now = Date.now();
+            if (!scoreboardDataCache || (now - lastScoreboardUpdate) > SCOREBOARD_CACHE_DURATION) {
+                await updateScoreboardCache();
+            }
+            
             await updateScoreboardDisplay();
         }
 
         // 更新得分榜显示
         async function updateScoreboardDisplay() {
             const scoreboardData = document.getElementById('scoreboardData');
+            
+            // 如果缓存中有数据，直接使用缓存
+            if (scoreboardDataCache) {
+                renderScoreboard(scoreboardDataCache);
+                return;
+            }
+            
+            // 否则显示加载中
             scoreboardData.innerHTML = '<div class="loading-message">正在加载得分数据...</div>';
             
             const result = await getScoreboardData();
@@ -1098,37 +1156,44 @@
             }
             
             if (result.data && result.data.length > 0) {
-                let html = `
-                    <table class="scoreboard-table">
-                        <thead>
-                            <tr>
-                                <th>排名</th>
-                                <th>姓名</th>
-                                <th>总分</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                `;
-                
-                result.data.forEach((item, index) => {
-                    html += `
-                        <tr>
-                            <td>${index + 1}</td>
-                            <td>${item.name}</td>
-                            <td>${item.totalScore}</td>
-                        </tr>
-                    `;
-                });
-                
-                html += `
-                        </tbody>
-                    </table>
-                `;
-                
-                scoreboardData.innerHTML = html;
+                renderScoreboard(result.data);
             } else {
                 scoreboardData.innerHTML = '<div class="loading-message">暂无得分数据</div>';
             }
+        }
+
+        // 渲染得分榜
+        function renderScoreboard(data) {
+            const scoreboardData = document.getElementById('scoreboardData');
+            
+            let html = `
+                <table class="scoreboard-table">
+                    <thead>
+                        <tr>
+                            <th>排名</th>
+                            <th>姓名</th>
+                            <th>总分</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+            `;
+            
+            data.forEach((item, index) => {
+                html += `
+                    <tr>
+                        <td>${index + 1}</td>
+                        <td>${item.name}</td>
+                        <td>${item.totalScore}</td>
+                    </tr>
+                `;
+            });
+            
+            html += `
+                    </tbody>
+                </table>
+            `;
+            
+            scoreboardData.innerHTML = html;
         }
 
         // 预加载所有学生头像
@@ -1166,6 +1231,9 @@
                     saveGitHubToken(token);
                     document.getElementById('githubTokenInput').value = '';
                     tokenSection.classList.add('collapsed');
+                    
+                    // Token保存后，立即预加载得分榜数据
+                    updateScoreboardCache();
                 } else {
                     showTokenStatus('请输入Token');
                 }
@@ -1179,7 +1247,7 @@
             
             // 得分榜功能
             document.getElementById('scoreboardBtn').addEventListener('click', showScoreboard);
-            document.getElementById('refreshScoreboard').addEventListener('click', updateScoreboardDisplay);
+            document.getElementById('refreshScoreboard').addEventListener('click', updateScoreboardCache);
             document.getElementById('closeScoreboard').addEventListener('click', function() {
                 document.getElementById('scoreboardModal').style.display = 'none';
             });
@@ -1220,6 +1288,9 @@
                     
                     // 密码验证通过后预加载所有头像
                     preloadStudentImages();
+                    
+                    // 密码验证通过后预加载得分榜数据
+                    updateScoreboardCache();
                 } else {
                     alert('密码错误，请重新输入！');
                     document.getElementById('passwordInput').value = '';
