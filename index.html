@@ -310,8 +310,8 @@
             border-radius: 8px;
             margin-right: 15px;
             width: 250px;
-            background: rgba(255, 255, 255, 0.1);
-            color: white;
+            background: rgba(0, 0, 0, 0.3);
+            color: #ffeb3b;
             border: 1px solid rgba(255, 255, 255, 0.2);
         }
         
@@ -651,6 +651,11 @@
             color: #ff6b6b;
             font-size: 1.1rem;
         }
+        
+        /* 头像预加载区域 */
+        .image-preload {
+            display: none;
+        }
     </style>
 </head>
 <body>
@@ -707,6 +712,9 @@
         </div>
     </div>
 
+    <!-- 头像预加载区域 -->
+    <div class="image-preload" id="imagePreload"></div>
+
     <!-- GitHub Token 设置区域 -->
     <div class="github-token-section collapsed" id="githubTokenSection">
         <button class="token-toggle" id="tokenToggle">⚙️</button>
@@ -722,7 +730,7 @@
     <div class="scoreboard-modal" id="scoreboardModal">
         <div class="scoreboard-content">
             <div class="scoreboard-header">
-                <h2>得分榜</h2>
+                <h2>学生得分榜</h2>
                 <div>
                     <button class="refresh-scoreboard" id="refreshScoreboard">刷新</button>
                     <button class="close-scoreboard" id="closeScoreboard">&times;</button>
@@ -1123,6 +1131,20 @@
             }
         }
 
+        // 预加载所有学生头像
+        function preloadStudentImages() {
+            const preloadContainer = document.getElementById('imagePreload');
+            
+            students.forEach(student => {
+                const img = new Image();
+                img.src = `images/${student}.jpg`;
+                img.alt = `${student}的头像`;
+                preloadContainer.appendChild(img);
+            });
+            
+            console.log('所有学生头像已预加载');
+        }
+
         // 初始化
         document.addEventListener('DOMContentLoaded', function() {
             createStars();
@@ -1195,6 +1217,9 @@
                 if (password === 'math123') {
                     document.getElementById('passwordSection').style.display = 'none';
                     document.getElementById('mainContent').style.display = 'block';
+                    
+                    // 密码验证通过后预加载所有头像
+                    preloadStudentImages();
                 } else {
                     alert('密码错误，请重新输入！');
                     document.getElementById('passwordInput').value = '';
@@ -1226,12 +1251,15 @@
                 audio.loop = true;
                 audio.play().catch(e => console.log('音频播放失败:', e));
                 
-                // 擦除式滚动效果
-                let currentIndex = 0;
+                // 使用系统时间作为随机种子
+                const seed = Date.now();
+                let currentIndex = Math.floor(Math.random() * students.length);
                 
                 rollInterval = setInterval(() => {
-                    studentNameElement.textContent = students[currentIndex];
-                    currentIndex = (currentIndex + 1) % students.length;
+                    // 使用更复杂的随机算法，结合系统时间
+                    const now = Date.now();
+                    const randomIndex = Math.floor((Math.sin(seed + now) + 1) * 0.5 * students.length) % students.length;
+                    studentNameElement.textContent = students[randomIndex];
                 }, 100);
                 
                 // 4秒后停止
@@ -1271,8 +1299,10 @@
                 const studentNameElement = document.getElementById('studentName');
                 studentNameElement.classList.remove('rolling');
                 
-                // 随机选择学生
-                selectedStudent = students[Math.floor(Math.random() * students.length)];
+                // 使用系统时间作为随机种子选择学生
+                const seed = Date.now();
+                const randomIndex = Math.floor((Math.sin(seed) + 1) * 0.5 * students.length) % students.length;
+                selectedStudent = students[randomIndex];
                 selectStudent(selectedStudent);
             }
             
