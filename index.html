@@ -44,14 +44,14 @@
         .container {
             max-width: 1200px;
             margin: 0 auto;
-            padding: 20px;
+            padding: 15px;
             text-align: center;
             position: relative;
             z-index: 1;
         }
         
         h1 {
-            font-size: 2.5rem;
+            font-size: 2.2rem;
             margin-bottom: 15px;
             text-shadow: 0 0 15px rgba(255, 255, 255, 0.7);
             background: linear-gradient(to right, #4facfe, #00f2fe);
@@ -61,27 +61,27 @@
         
         .password-section {
             background: rgba(255, 255, 255, 0.08);
-            padding: 30px;
-            border-radius: 20px;
-            margin-bottom: 25px;
+            padding: 25px;
+            border-radius: 15px;
+            margin-bottom: 20px;
             box-shadow: 0 0 30px rgba(0, 0, 0, 0.3);
             backdrop-filter: blur(10px);
             border: 1px solid rgba(255, 255, 255, 0.1);
         }
         
         .password-section h2 {
-            margin-bottom: 20px;
-            font-size: 1.6rem;
+            margin-bottom: 15px;
+            font-size: 1.4rem;
             color: #a3d9ff;
         }
         
         .password-section input {
-            padding: 12px 20px;
-            font-size: 1.2rem;
+            padding: 10px 15px;
+            font-size: 1.1rem;
             border: none;
-            border-radius: 10px;
-            margin-right: 15px;
-            width: 280px;
+            border-radius: 8px;
+            margin-right: 10px;
+            width: 250px;
             background: rgba(255, 255, 255, 0.1);
             color: white;
             border: 1px solid rgba(255, 255, 255, 0.2);
@@ -95,12 +95,12 @@
         }
         
         .password-section button {
-            padding: 12px 30px;
-            font-size: 1.2rem;
+            padding: 10px 25px;
+            font-size: 1.1rem;
             background: linear-gradient(to right, #4facfe, #00f2fe);
             color: white;
             border: none;
-            border-radius: 10px;
+            border-radius: 8px;
             cursor: pointer;
             transition: all 0.3s;
             box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
@@ -114,18 +114,21 @@
         .main-content {
             display: none;
             background: rgba(255, 255, 255, 0.08);
-            padding: 30px;
-            border-radius: 20px;
+            padding: 25px;
+            border-radius: 15px;
             box-shadow: 0 0 30px rgba(0, 0, 0, 0.3);
             backdrop-filter: blur(10px);
             border: 1px solid rgba(255, 255, 255, 0.1);
         }
         
         .image-container {
-            margin: 15px auto 30px;
+            margin: 15px auto 20px;
             position: relative;
-            width: 280px;
-            height: 280px;
+            width: 240px;
+            height: 240px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
         }
         
         .student-image {
@@ -136,7 +139,6 @@
             border: 5px solid rgba(255, 255, 255, 0.3);
             box-shadow: 0 0 40px rgba(79, 172, 254, 0.7);
             display: none;
-            /* 优化美颜增白滤镜效果 */
             filter: 
                 brightness(1.1) 
                 contrast(1.05) 
@@ -146,6 +148,19 @@
             animation: imageGlow 2s infinite alternate;
             position: relative;
             z-index: 2;
+        }
+        
+        .student-name-in-image {
+            font-size: 2.2rem;
+            font-weight: bold;
+            color: #ffeb3b;
+            text-shadow: 0 0 20px rgba(255, 235, 59, 0.8);
+            animation: selectedEffect 3s infinite alternate;
+            display: none;
+            text-align: center;
+            width: 100%;
+            position: absolute;
+            z-index: 3;
         }
         
         /* 添加柔光效果层 */
@@ -189,21 +204,21 @@
         }
         
         .student-display {
-            height: 180px;
-            margin: 25px 0;
+            height: 60px;
+            margin: 15px 0;
             display: flex;
             justify-content: center;
             align-items: center;
             position: relative;
             overflow: hidden;
             background: rgba(0, 0, 0, 0.2);
-            border-radius: 20px;
-            padding: 15px;
+            border-radius: 15px;
+            padding: 10px;
             border: 1px solid rgba(255, 255, 255, 0.1);
         }
         
         .student-name {
-            font-size: 2.8rem;
+            font-size: 2.2rem;
             font-weight: bold;
             color: #ffffff;
             transition: all 0.3s ease;
@@ -253,20 +268,20 @@
         }
         
         .controls {
-            margin: 30px 0 15px;
+            margin: 20px 0 15px;
             display: flex;
             justify-content: center;
             flex-wrap: wrap;
-            gap: 12px;
+            gap: 10px;
         }
         
         .controls button {
-            padding: 14px 30px;
-            font-size: 1.2rem;
+            padding: 12px 25px;
+            font-size: 1.1rem;
             background: linear-gradient(to right, #4facfe, #00f2fe);
             color: white;
             border: none;
-            border-radius: 10px;
+            border-radius: 8px;
             cursor: pointer;
             transition: all 0.3s;
             box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
@@ -290,38 +305,38 @@
         }
         
         .specify-section {
-            margin-top: 25px;
+            margin-top: 20px;
             display: none;
             background: rgba(255, 255, 255, 0.1);
-            padding: 20px;
-            border-radius: 15px;
+            padding: 15px;
+            border-radius: 12px;
         }
         
         .specify-section h3 {
-            margin-bottom: 15px;
-            font-size: 1.4rem;
+            margin-bottom: 12px;
+            font-size: 1.3rem;
             color: #a3d9ff;
         }
         
         .specify-section select {
-            padding: 10px 15px;
-            font-size: 1.2rem;
+            padding: 8px 12px;
+            font-size: 1.1rem;
             border: none;
-            border-radius: 8px;
-            margin-right: 15px;
-            width: 220px;
+            border-radius: 6px;
+            margin-right: 10px;
+            width: 200px;
             background: rgba(0, 0, 0, 0.3);
             color: #ffeb3b;
             border: 1px solid rgba(255, 255, 255, 0.2);
         }
         
         .specify-section button {
-            padding: 10px 25px;
-            font-size: 1.2rem;
+            padding: 8px 20px;
+            font-size: 1.1rem;
             background: linear-gradient(to right, #9c27b0, #e91e63);
             color: white;
             border: none;
-            border-radius: 8px;
+            border-radius: 6px;
             cursor: pointer;
             transition: all 0.3s;
         }
@@ -331,38 +346,38 @@
         }
         
         .score-section {
-            margin-top: 25px;
+            margin-top: 20px;
             display: none;
             background: rgba(255, 255, 255, 0.1);
-            padding: 20px;
-            border-radius: 15px;
+            padding: 15px;
+            border-radius: 12px;
         }
         
         .score-section h3 {
-            margin-bottom: 15px;
-            font-size: 1.4rem;
+            margin-bottom: 12px;
+            font-size: 1.3rem;
             color: #a3d9ff;
         }
         
         .score-section input {
-            padding: 10px 15px;
-            font-size: 1.2rem;
+            padding: 8px 12px;
+            font-size: 1.1rem;
             border: none;
-            border-radius: 8px;
-            margin-right: 15px;
-            width: 160px;
+            border-radius: 6px;
+            margin-right: 10px;
+            width: 150px;
             background: rgba(255, 255, 255, 0.1);
             color: white;
             border: 1px solid rgba(255, 255, 255, 0.2);
         }
         
         .score-section button {
-            padding: 10px 25px;
-            font-size: 1.2rem;
+            padding: 8px 20px;
+            font-size: 1.1rem;
             background: linear-gradient(to right, #4facfe, #00f2fe);
             color: white;
             border: none;
-            border-radius: 8px;
+            border-radius: 6px;
             cursor: pointer;
             transition: all 0.3s;
         }
@@ -372,8 +387,8 @@
         }
         
         .message {
-            font-size: 1.6rem;
-            margin: 20px 0;
+            font-size: 1.4rem;
+            margin: 15px 0;
             color: #ffeb3b;
             text-shadow: 0 0 10px rgba(255, 235, 59, 0.7);
             animation: messagePulse 2s infinite alternate;
@@ -437,14 +452,14 @@
         }
         
         .system-info {
-            margin-top: 25px;
-            font-size: 0.9rem;
+            margin-top: 20px;
+            font-size: 0.85rem;
             color: rgba(255, 255, 255, 0.6);
         }
         
         .save-status {
-            margin-top: 12px;
-            font-size: 0.9rem;
+            margin-top: 10px;
+            font-size: 0.85rem;
             color: #4caf50;
             display: none;
         }
@@ -452,21 +467,21 @@
         /* GitHub Token 设置区域 */
         .github-token-section {
             position: fixed;
-            bottom: 15px;
-            right: 15px;
+            bottom: 12px;
+            right: 12px;
             background: rgba(0, 0, 0, 0.8);
-            padding: 12px;
-            border-radius: 10px;
+            padding: 10px;
+            border-radius: 8px;
             border: 1px solid rgba(255, 255, 255, 0.2);
             backdrop-filter: blur(10px);
             z-index: 100;
-            width: 280px;
+            width: 250px;
             transition: all 0.3s ease;
         }
 
         .github-token-section.collapsed {
-            width: 45px;
-            height: 45px;
+            width: 40px;
+            height: 40px;
             overflow: hidden;
         }
 
@@ -482,10 +497,10 @@
             border: none;
             color: white;
             border-radius: 50%;
-            width: 28px;
-            height: 28px;
+            width: 25px;
+            height: 25px;
             cursor: pointer;
-            font-size: 14px;
+            font-size: 12px;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -498,29 +513,29 @@
         .token-content h4 {
             margin-bottom: 8px;
             color: #a3d9ff;
-            font-size: 0.9rem;
+            font-size: 0.85rem;
         }
 
         .token-content input {
             width: 100%;
-            padding: 7px;
+            padding: 6px;
             margin-bottom: 8px;
             background: rgba(255, 255, 255, 0.1);
             border: 1px solid rgba(255, 255, 255, 0.2);
-            border-radius: 5px;
+            border-radius: 4px;
             color: white;
-            font-size: 0.8rem;
+            font-size: 0.75rem;
         }
 
         .token-content button {
             width: 100%;
-            padding: 7px;
+            padding: 6px;
             background: linear-gradient(to right, #4facfe, #00f2fe);
             border: none;
-            border-radius: 5px;
+            border-radius: 4px;
             color: white;
             cursor: pointer;
-            font-size: 0.8rem;
+            font-size: 0.75rem;
         }
 
         .token-content button:hover {
@@ -528,8 +543,8 @@
         }
 
         .token-status {
-            margin-top: 7px;
-            font-size: 0.7rem;
+            margin-top: 6px;
+            font-size: 0.65rem;
             color: #4caf50;
             display: none;
         }
@@ -553,10 +568,10 @@
             left: 50%;
             transform: translate(-50%, -50%);
             background: linear-gradient(135deg, #1a2980, #26d0ce);
-            padding: 25px;
-            border-radius: 20px;
+            padding: 20px;
+            border-radius: 15px;
             box-shadow: 0 0 50px rgba(0, 0, 0, 0.5);
-            min-width: 450px;
+            min-width: 400px;
             max-width: 80%;
             max-height: 80%;
             overflow-y: auto;
@@ -571,7 +586,7 @@
 
         .scoreboard-header h2 {
             color: #ffeb3b;
-            font-size: 1.8rem;
+            font-size: 1.6rem;
             text-shadow: 0 0 10px rgba(255, 235, 59, 0.5);
         }
 
@@ -579,11 +594,11 @@
             background: none;
             border: none;
             color: white;
-            font-size: 1.8rem;
+            font-size: 1.6rem;
             cursor: pointer;
             padding: 0;
-            width: 35px;
-            height: 35px;
+            width: 30px;
+            height: 30px;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -597,8 +612,8 @@
             background: linear-gradient(to right, #4caf50, #8bc34a);
             border: none;
             color: white;
-            padding: 7px 14px;
-            border-radius: 5px;
+            padding: 6px 12px;
+            border-radius: 4px;
             cursor: pointer;
             margin-left: 8px;
         }
@@ -615,7 +630,7 @@
 
         .scoreboard-table th,
         .scoreboard-table td {
-            padding: 12px;
+            padding: 10px;
             text-align: center;
             border-bottom: 1px solid rgba(255, 255, 255, 0.2);
         }
@@ -623,11 +638,11 @@
         .scoreboard-table th {
             background: rgba(255, 255, 255, 0.1);
             color: #ffeb3b;
-            font-size: 1.1rem;
+            font-size: 1rem;
         }
 
         .scoreboard-table td {
-            font-size: 1rem;
+            font-size: 0.9rem;
         }
 
         .scoreboard-table tr:hover {
@@ -642,14 +657,14 @@
             text-align: center;
             padding: 15px;
             color: #a3d9ff;
-            font-size: 1.1rem;
+            font-size: 1rem;
         }
 
         .error-message {
             text-align: center;
             padding: 15px;
             color: #ff6b6b;
-            font-size: 1rem;
+            font-size: 0.9rem;
         }
         
         /* 头像预加载区域 */
@@ -659,8 +674,8 @@
         
         /* 预加载状态信息 */
         .preload-status {
-            margin-top: 12px;
-            font-size: 0.8rem;
+            margin-top: 10px;
+            font-size: 0.75rem;
             color: rgba(255, 255, 255, 0.4);
             text-align: center;
         }
@@ -694,6 +709,7 @@
         <div class="main-content" id="mainContent">
             <div class="image-container">
                 <img class="student-image" id="studentImage" alt="学生头像">
+                <div class="student-name-in-image" id="studentNameInImage"></div>
             </div>
             
             <div class="student-display">
@@ -1436,6 +1452,7 @@
                 
                 isRolling = true;
                 document.getElementById('studentImage').style.display = 'none';
+                document.getElementById('studentNameInImage').style.display = 'none';
                 document.getElementById('message').textContent = '';
                 document.getElementById('scoreSection').style.display = 'none';
                 document.getElementById('specifySection').style.display = 'none';
@@ -1536,10 +1553,20 @@
                 speech.pitch = 1.0;
                 window.speechSynthesis.speak(speech);
                 
-                // 5秒后隐藏头像
+                // 5秒后隐藏头像，显示学生姓名在头像位置
                 setTimeout(() => {
                     studentImage.style.display = 'none';
                     studentImage.classList.remove('active');
+                    
+                    // 隐藏原来的学生姓名显示区域
+                    studentNameElement.style.display = 'none';
+                    
+                    // 在头像位置显示学生姓名
+                    const studentNameInImage = document.getElementById('studentNameInImage');
+                    studentNameInImage.textContent = selectedStudent;
+                    studentNameInImage.style.display = 'block';
+                    
+                    // 显示打分区域
                     document.getElementById('scoreSection').style.display = 'block';
                     document.getElementById('scoringStudent').textContent = selectedStudent;
                 }, 5000);
@@ -1559,6 +1586,10 @@
                 
                 document.getElementById('scoreInput').value = '';
                 document.getElementById('scoreSection').style.display = 'none';
+                
+                // 恢复显示区域
+                document.getElementById('studentName').style.display = 'block';
+                document.getElementById('studentNameInImage').style.display = 'none';
             });
         });
     </script>
