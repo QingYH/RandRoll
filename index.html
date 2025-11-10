@@ -1009,27 +1009,35 @@
                 return;
             }
             
-            // 创建Excel内容
-            let excelContent = "排名,姓名,总分\n";
+            // 创建Excel内容 - 使用UTF-8 BOM解决中文乱码问题
+            const BOM = '\uFEFF';
+            let excelContent = BOM + "排名,姓名,总分\n";
             
             scoreboardDataCache.forEach((item, index) => {
                 excelContent += `${index + 1},${item.name},${item.totalScore}\n`;
             });
             
-            // 创建Blob对象
-            const blob = new Blob([excelContent], { type: 'text/csv;charset=utf-8;' });
+            // 创建Blob对象，指定UTF-8编码
+            const blob = new Blob([excelContent], { 
+                type: 'text/csv;charset=utf-8;' 
+            });
             
             // 创建下载链接
             const link = document.createElement('a');
             const url = URL.createObjectURL(blob);
             link.setAttribute('href', url);
-            link.setAttribute('download', `高数B3班得分榜_${new Date().toLocaleDateString()}.csv`);
+            link.setAttribute('download', `高数B3班得分榜_${new Date().toLocaleDateString().replace(/\//g, '-')}.csv`);
             link.style.visibility = 'hidden';
             
             // 添加到文档并触发下载
             document.body.appendChild(link);
             link.click();
             document.body.removeChild(link);
+            
+            // 释放URL对象
+            setTimeout(() => {
+                URL.revokeObjectURL(url);
+            }, 100);
         }
 
         // 获取保存的GitHub Token
