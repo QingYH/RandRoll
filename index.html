@@ -130,6 +130,9 @@
             justify-content: center;
             align-items: center;
             transition: all 0.5s ease;
+            border-radius: 50%;
+            border: 5px solid rgba(255, 255, 255, 0.3);
+            box-shadow: 0 0 40px rgba(79, 172, 254, 0.7);
         }
         
         .image-container.no-border {
@@ -143,8 +146,6 @@
             height: 100%;
             border-radius: 50%;
             object-fit: cover;
-            border: 5px solid rgba(255, 255, 255, 0.3);
-            box-shadow: 0 0 40px rgba(79, 172, 254, 0.7);
             display: none;
             filter: 
                 brightness(1.1) 
@@ -796,12 +797,12 @@
         </div>
         
         <div class="main-content" id="mainContent">
-            <div class="image-container">
+            <div class="image-container" id="imageContainer">
                 <img class="student-image" id="studentImage" alt="学生头像">
                 <div class="student-name-in-image" id="studentNameInImage"></div>
             </div>
             
-            <div class="student-display">
+            <div class="student-display" id="studentDisplay">
                 <div class="student-name" id="studentName"></div>
             </div>
             
@@ -859,7 +860,7 @@
     <div class="scoreboard-modal" id="scoreboardModal">
         <div class="scoreboard-content">
             <div class="scoreboard-header">
-                <h2>得分榜</h2>
+                <h2>学生得分榜</h2>
                 <div class="scoreboard-buttons">
                     <button class="download-scoreboard" id="downloadScoreboard">
                         <span>📥</span> 下载
