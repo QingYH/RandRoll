@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>高等数学课堂提问计分系统 | 隐私保护版</title>
+    <title>高等数学课堂提问计分系统 | 撒花庆祝版</title>
     <style>
         * {
             margin: 0;
@@ -133,7 +133,7 @@
             border-radius: 50%;
             border: 5px solid rgba(255, 255, 255, 0.3);
             box-shadow: 0 0 40px rgba(79, 172, 254, 0.7);
-            overflow: hidden;  /* 确保马赛克canvas完全在圆形容器内 */
+            overflow: hidden;
         }
         
         .image-container.no-border {
@@ -152,7 +152,7 @@
             z-index: 2;
         }
         
-        /* 马赛克Canvas层，覆盖在原始图片上方 */
+        /* 马赛克Canvas层 */
         .mosaic-canvas {
             position: absolute;
             top: 0;
@@ -178,13 +178,9 @@
             z-index: 3;
         }
         
-        @keyframes imageGlow {
-            0% { 
-                box-shadow: 0 0 30px rgba(79, 172, 254, 0.5);
-            }
-            100% { 
-                box-shadow: 0 0 50px rgba(79, 172, 254, 0.9);
-            }
+        @keyframes selectedEffect {
+            0% { transform: scale(0.95); text-shadow: 0 0 15px rgba(255, 235, 59, 0.7); }
+            100% { transform: scale(1.05); text-shadow: 0 0 25px rgba(255, 235, 59, 0.9); }
         }
         
         .student-display {
@@ -238,11 +234,6 @@
             animation: selectedEffect 3s infinite alternate;
         }
         
-        @keyframes selectedEffect {
-            0% { transform: scale(0.95); text-shadow: 0 0 15px rgba(255, 235, 59, 0.7); }
-            100% { transform: scale(1.05); text-shadow: 0 0 25px rgba(255, 235, 59, 0.9); }
-        }
-        
         .controls {
             margin: 20px 0 15px;
             display: flex;
@@ -288,12 +279,6 @@
             border-radius: 12px;
         }
         
-        .specify-section h3 {
-            margin-bottom: 12px;
-            font-size: 1.3rem;
-            color: #a3d9ff;
-        }
-        
         .specify-section select {
             padding: 8px 12px;
             font-size: 1.1rem;
@@ -306,29 +291,12 @@
             border: 1px solid rgba(255, 255, 255, 0.2);
         }
         
-        .specify-section button {
-            padding: 8px 20px;
-            font-size: 1.1rem;
-            background: linear-gradient(to right, #9c27b0, #e91e63);
-            color: white;
-            border: none;
-            border-radius: 6px;
-            cursor: pointer;
-            transition: all 0.3s;
-        }
-        
         .score-section {
             margin-top: 20px;
             display: none;
             background: rgba(255, 255, 255, 0.1);
             padding: 15px;
             border-radius: 12px;
-        }
-        
-        .score-section h3 {
-            margin-bottom: 12px;
-            font-size: 1.3rem;
-            color: #a3d9ff;
         }
         
         .score-section input {
@@ -341,16 +309,6 @@
             background: rgba(255, 255, 255, 0.1);
             color: white;
             border: 1px solid rgba(255, 255, 255, 0.2);
-        }
-        
-        .score-section button {
-            padding: 8px 20px;
-            font-size: 1.1rem;
-            background: linear-gradient(to right, #4facfe, #00f2fe);
-            color: white;
-            border: none;
-            border-radius: 6px;
-            cursor: pointer;
         }
         
         .message {
@@ -366,43 +324,84 @@
             100% { opacity: 1; }
         }
         
-        .celebration {
+        /* ========== 撒花效果样式 ========== */
+        .confetti-container {
             position: fixed;
-            width: 100%;
-            height: 100%;
             top: 0;
             left: 0;
+            width: 100%;
+            height: 100%;
             pointer-events: none;
-            z-index: 10;
-            display: none;
+            z-index: 1000;
+            overflow: hidden;
         }
         
-        .firework {
+        .confetti {
             position: absolute;
-            width: 5px;
-            height: 5px;
+            width: 10px;
+            height: 10px;
+            background: linear-gradient(135deg, #ffeb3b, #ff9800);
+            opacity: 0.9;
+            animation: confettiFall 3s ease-out forwards;
+            z-index: 1001;
+        }
+        
+        @keyframes confettiFall {
+            0% {
+                transform: translateY(-20vh) rotate(0deg);
+                opacity: 1;
+            }
+            80% {
+                opacity: 0.8;
+            }
+            100% {
+                transform: translateY(100vh) rotate(720deg);
+                opacity: 0;
+            }
+        }
+        
+        /* 撒花用的圆点彩纸 */
+        .confetti-dot {
+            position: absolute;
+            width: 8px;
+            height: 8px;
             border-radius: 50%;
-            animation: firework 1.5s ease-out forwards;
+            animation: confettiFall 2.5s ease-out forwards;
         }
         
-        @keyframes firework {
-            0% { transform: translate(var(--x), var(--y)); width: 5px; height: 5px; opacity: 1; }
-            50% { width: 5px; height: 5px; opacity: 1; }
-            100% { width: 200px; height: 200px; opacity: 0; }
-        }
-        
-        .sparkle {
+        /* 长条彩纸 */
+        .confetti-rect {
             position: absolute;
-            width: 20px;
-            height: 20px;
-            background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill="yellow" d="M12,2L9,12L2,12L10,17L7,22L12,17L17,22L14,17L22,12L15,12L12,2Z"/></svg>') no-repeat center;
-            background-size: contain;
-            animation: sparkle 2s infinite alternate;
+            width: 12px;
+            height: 6px;
+            background: linear-gradient(135deg, #ff6b6b, #feca57);
+            animation: confettiFall 3.2s ease-out forwards;
         }
         
-        @keyframes sparkle {
-            0% { transform: scale(0.8) rotate(0deg); opacity: 0.7; }
-            100% { transform: scale(1.2) rotate(180deg); opacity: 1; }
+        /* 烟花爆炸效果容器 */
+        .firework-burst {
+            position: fixed;
+            pointer-events: none;
+            z-index: 1002;
+        }
+        
+        .firework-particle {
+            position: absolute;
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            animation: particleExpand 1s ease-out forwards;
+        }
+        
+        @keyframes particleExpand {
+            0% {
+                transform: translate(0, 0) scale(1);
+                opacity: 1;
+            }
+            100% {
+                transform: translate(var(--dx), var(--dy)) scale(0);
+                opacity: 0;
+            }
         }
         
         .score-animation {
@@ -433,7 +432,6 @@
             20% { transform: scale(1.2) translateY(-20px); opacity: 1; }
             40% { transform: scale(1.5) translateY(-40px); opacity: 1; }
             60% { transform: scale(1.2) translateY(-80px); opacity: 0.8; }
-            80% { transform: scale(0.8) translateY(-120px); opacity: 0.5; }
             100% { transform: scale(0.5) translateY(-160px); opacity: 0; }
         }
         
@@ -450,7 +448,6 @@
             display: none;
         }
 
-        /* GitHub Token 设置区域 */
         .github-token-section {
             position: fixed;
             bottom: 12px;
@@ -483,9 +480,6 @@
             height: 25px;
             cursor: pointer;
             font-size: 12px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
         }
 
         .token-content h4 {
@@ -502,7 +496,6 @@
             border: 1px solid rgba(255, 255, 255, 0.2);
             border-radius: 4px;
             color: white;
-            font-size: 0.75rem;
         }
 
         .token-content button {
@@ -513,14 +506,6 @@
             border-radius: 4px;
             color: white;
             cursor: pointer;
-            font-size: 0.75rem;
-        }
-
-        .token-status {
-            margin-top: 6px;
-            font-size: 0.65rem;
-            color: #4caf50;
-            display: none;
         }
 
         .scoreboard-modal {
@@ -531,7 +516,7 @@
             width: 100%;
             height: 100%;
             background: rgba(0, 0, 0, 0.8);
-            z-index: 1000;
+            z-index: 2000;
             backdrop-filter: blur(5px);
         }
 
@@ -543,7 +528,6 @@
             background: linear-gradient(135deg, #1a2980, #26d0ce);
             padding: 20px;
             border-radius: 15px;
-            box-shadow: 0 0 50px rgba(0, 0, 0, 0.5);
             min-width: 500px;
             max-width: 80%;
             max-height: 80%;
@@ -559,39 +543,11 @@
 
         .scoreboard-header h2 {
             color: #ffeb3b;
-            font-size: 1.6rem;
-        }
-
-        .scoreboard-buttons {
-            display: flex;
-            gap: 10px;
-        }
-
-        .download-scoreboard, .refresh-scoreboard {
-            background: linear-gradient(to right, #ff9800, #ff5722);
-            border: none;
-            color: white;
-            padding: 6px 12px;
-            border-radius: 4px;
-            cursor: pointer;
-        }
-
-        .refresh-scoreboard {
-            background: linear-gradient(to right, #4caf50, #8bc34a);
-        }
-
-        .close-scoreboard {
-            background: none;
-            border: none;
-            color: white;
-            font-size: 1.6rem;
-            cursor: pointer;
         }
 
         .scoreboard-table {
             width: 100%;
             border-collapse: collapse;
-            margin-top: 15px;
         }
 
         .scoreboard-table th, .scoreboard-table td {
@@ -600,25 +556,11 @@
             border-bottom: 1px solid rgba(255, 255, 255, 0.2);
         }
 
-        .scoreboard-table th {
-            background: rgba(255, 255, 255, 0.1);
-            color: #ffeb3b;
-        }
-
-        .image-preload {
-            display: none;
-        }
-        
-        .preload-status {
-            margin-top: 10px;
-            font-size: 0.75rem;
-            color: rgba(255, 255, 255, 0.4);
-        }
+        .image-preload { display: none; }
     </style>
 </head>
 <body>
     <div class="stars" id="stars"></div>
-    <div class="celebration" id="celebration"></div>
     <div class="score-animation" id="scoreAnimation"></div>
     <div class="container">
         <h1>高等数学课堂提问计分系统</h1>
@@ -654,7 +596,7 @@
                 <button id="submitScore">提交分数</button>
                 <div class="save-status" id="saveStatus"></div>
             </div>
-            <div class="system-info"><p>系统提示：点击开始点名随机选择，停止点名确定人选，照片自动马赛克处理，姓名仅显示姓氏+星号(可配置)</p></div>
+            <div class="system-info"><p>✨ 中奖后自动撒花庆祝 ✨ | 照片马赛克处理 | 姓名隐私保护</p></div>
         </div>
     </div>
     <div class="image-preload" id="imagePreload"></div>
@@ -671,35 +613,29 @@
         <div class="scoreboard-content">
             <div class="scoreboard-header">
                 <h2>学生得分榜</h2>
-                <div class="scoreboard-buttons">
-                    <button class="download-scoreboard" id="downloadScoreboard">📥 下载</button>
-                    <button class="refresh-scoreboard" id="refreshScoreboard">刷新</button>
-                    <button class="close-scoreboard" id="closeScoreboard">&times;</button>
-                </div>
+                <button class="close-scoreboard" id="closeScoreboard">&times;</button>
             </div>
-            <div id="scoreboardData"><div class="loading-message">加载中...</div></div>
+            <div id="scoreboardData"></div>
         </div>
     </div>
+
     <script>
         // ==================== 隐私保护配置开关 ====================
-        // 如需完全显示真实姓名(不脱敏)且不对照片打马赛克，只需将下方两个变量改为 false 即可，其余代码无需改动。
-        const ENABLE_MOSAIC_ON_IMAGE = true;   // 是否对学生照片应用马赛克效果 (true:马赛克; false:原图)
-        const ENABLE_NAME_PRIVACY = true;      // 是否对姓名脱敏 (true:仅显示姓氏+**; false:显示完整姓名)
+        const ENABLE_MOSAIC_ON_IMAGE = true;   // true:马赛克 false:原图
+        const ENABLE_NAME_PRIVACY = true;      // true:仅显示姓氏+** false:完整姓名
         // ========================================================
         
-        // 学生名单 (完整姓名)
         const students = ["徐若伽", "程子昂", "朱静蕾", "王硕", "邹健乐", "吴子涵", "张怡", "胡恒远", "夏天香", "谢涵","朱芮", "李欣怡", "俞光燕", "郭英姿", "张天乐", "李乐乐", "李志豪", "杨硕", "杨鋆妍", "金宇","胡文远", "胡雨欣", "常俊", "韦书成", "汤子扬", "阮家豪", "何俊杰", "单宇阳", "姚勇棋", "段海冰","唐亚", "鲍瑞锋", "蔡贤运", "方海涛", "韦宇恒", "韦嘉乐", "王昊宇", "王瑞琦", "叶啟军", "年博一","刘子龙", "刘瑞", "朱勋振", "张宇洋", "张浩宇", "李俊杰", "杨文宇", "杨树园", "杨盛浩", "唐志远","夏云勇", "谢超", "毛运朝", "韦玉", "孙耀坤", "朱行跃", "陈启睿", "姚智鹏", "韩紫嫣", "王童","叶婷婷", "童欣怡", "舒智文", "韩玉洁", "梁晖", "谭慧慧", "马鑫宇", "孔艺涵", "方玉达", "王梦云","张梦婷", "房银霏", "梁心怡", "梁宇琨", "霍浩然", "丁宇轩", "马自红", "牛好", "江海涛", "张家福","罗时武", "胡耀", "赵紫涵", "高庆鹏", "盛文涛", "卞勇乐", "朱贤涛", "张玉洁", "张鸣威", "张恒","杨佳怡", "陈家乐", "明华东", "姚猛", "项可益", "湛益阳"];
         
-        // 脱敏函数: 只显示姓氏，后面用 ** 代替 (若关闭隐私则返回原名)
+        // 脱敏函数
         function getPrivacyName(fullName) {
             if (!ENABLE_NAME_PRIVACY) return fullName;
             if (!fullName || fullName.length === 0) return "**";
-            const firstChar = fullName.charAt(0);
-            return firstChar + "**";
+            return fullName.charAt(0) + "**";
         }
         
-        // 应用马赛克到Canvas (将图片马赛克化)
-        function applyMosaicToImage(imgElement, canvasElement, mosaicBlockSize = 12) {
+        // 应用马赛克到Canvas
+        function applyMosaicToImage(imgElement, canvasElement, mosaicBlockSize = 14) {
             if (!ENABLE_MOSAIC_ON_IMAGE) {
                 canvasElement.style.display = 'none';
                 return;
@@ -726,21 +662,14 @@
                     for (let dy = 0; dy < h; dy++) {
                         for (let dx = 0; dx < w; dx++) {
                             const idx = ((y + dy) * width + (x + dx)) * 4;
-                            r += data[idx];
-                            g += data[idx + 1];
-                            b += data[idx + 2];
-                            count++;
+                            r += data[idx]; g += data[idx+1]; b += data[idx+2]; count++;
                         }
                     }
-                    r = Math.floor(r / count);
-                    g = Math.floor(g / count);
-                    b = Math.floor(b / count);
+                    r = Math.floor(r / count); g = Math.floor(g / count); b = Math.floor(b / count);
                     for (let dy = 0; dy < h; dy++) {
                         for (let dx = 0; dx < w; dx++) {
                             const idx = ((y + dy) * width + (x + dx)) * 4;
-                            data[idx] = r;
-                            data[idx + 1] = g;
-                            data[idx + 2] = b;
+                            data[idx] = r; data[idx+1] = g; data[idx+2] = b;
                         }
                     }
                 }
@@ -750,7 +679,161 @@
             imgElement.style.display = 'none';
         }
         
-        // 显示学生照片 (自动马赛克)
+        // ========== 撒花效果增强函数 ==========
+        let activeConfettiContainer = null;
+        
+        function createConfettiContainer() {
+            if (activeConfettiContainer) {
+                activeConfettiContainer.remove();
+            }
+            const container = document.createElement('div');
+            container.className = 'confetti-container';
+            document.body.appendChild(container);
+            activeConfettiContainer = container;
+            // 5秒后自动移除容器
+            setTimeout(() => {
+                if (activeConfettiContainer) {
+                    activeConfettiContainer.remove();
+                    activeConfettiContainer = null;
+                }
+            }, 5000);
+            return container;
+        }
+        
+        // 生成随机颜色
+        function randomColor() {
+            const colors = ['#ffeb3b', '#ff9800', '#ff5722', '#4caf50', '#2196f3', '#e91e63', '#9c27b0', '#00bcd4', '#ff4081', '#7c4dff'];
+            return colors[Math.floor(Math.random() * colors.length)];
+        }
+        
+        // 撒花主函数 - 多种彩纸效果
+        function startConfettiCelebration() {
+            const container = createConfettiContainer();
+            const confettiCount = 180;  // 彩纸数量
+            
+            for (let i = 0; i < confettiCount; i++) {
+                setTimeout(() => {
+                    const type = Math.random() > 0.6 ? 'rect' : 'dot';
+                    const confetti = document.createElement('div');
+                    
+                    if (type === 'dot') {
+                        confetti.className = 'confetti-dot';
+                        confetti.style.backgroundColor = randomColor();
+                        confetti.style.width = Math.random() * 10 + 5 + 'px';
+                        confetti.style.height = confetti.style.width;
+                    } else {
+                        confetti.className = 'confetti-rect';
+                        confetti.style.backgroundColor = randomColor();
+                        confetti.style.width = Math.random() * 15 + 8 + 'px';
+                        confetti.style.height = Math.random() * 6 + 4 + 'px';
+                        confetti.style.transform = `rotate(${Math.random() * 360}deg)`;
+                    }
+                    
+                    // 随机起始位置（从屏幕上方和两侧）
+                    const startX = Math.random() * window.innerWidth;
+                    const startY = -20 - Math.random() * 50;
+                    confetti.style.left = startX + 'px';
+                    confetti.style.top = startY + 'px';
+                    
+                    // 随机动画时长和延迟
+                    const duration = Math.random() * 2 + 2;
+                    const delay = Math.random() * 0.5;
+                    confetti.style.animation = `confettiFall ${duration}s ease-out forwards`;
+                    confetti.style.animationDelay = delay + 's';
+                    
+                    container.appendChild(confetti);
+                    
+                    // 动画结束后移除
+                    setTimeout(() => {
+                        if (confetti && confetti.remove) confetti.remove();
+                    }, (duration + delay) * 1000);
+                }, i * 15); // 错开生成时间，更自然
+            }
+            
+            // 添加烟花爆炸效果（中心爆发）
+            createFireworkBursts();
+        }
+        
+        // 烟花爆炸效果 - 从中奖区域向外扩散
+        function createFireworkBursts() {
+            const centerX = window.innerWidth / 2;
+            const centerY = window.innerHeight / 2;
+            
+            for (let burst = 0; burst < 3; burst++) {
+                setTimeout(() => {
+                    const particleCount = 40;
+                    for (let i = 0; i < particleCount; i++) {
+                        const particle = document.createElement('div');
+                        particle.className = 'firework-particle';
+                        particle.style.backgroundColor = randomColor();
+                        particle.style.left = centerX + 'px';
+                        particle.style.top = centerY + 'px';
+                        particle.style.position = 'fixed';
+                        
+                        const angle = Math.random() * Math.PI * 2;
+                        const distance = Math.random() * 150 + 50;
+                        const dx = Math.cos(angle) * distance;
+                        const dy = Math.sin(angle) * distance;
+                        particle.style.setProperty('--dx', dx + 'px');
+                        particle.style.setProperty('--dy', dy + 'px');
+                        
+                        document.body.appendChild(particle);
+                        
+                        setTimeout(() => particle.remove(), 1000);
+                    }
+                }, burst * 200);
+            }
+        }
+        
+        // 保留原有的简单烟花效果作为补充
+        function createSimpleFireworks() {
+            const celebration = document.createElement('div');
+            celebration.style.position = 'fixed';
+            celebration.style.top = '0';
+            celebration.style.left = '0';
+            celebration.style.width = '100%';
+            celebration.style.height = '100%';
+            celebration.style.pointerEvents = 'none';
+            celebration.style.zIndex = '999';
+            document.body.appendChild(celebration);
+            
+            for (let i = 0; i < 60; i++) {
+                setTimeout(() => {
+                    const firework = document.createElement('div');
+                    firework.style.position = 'absolute';
+                    firework.style.width = '6px';
+                    firework.style.height = '6px';
+                    firework.style.borderRadius = '50%';
+                    firework.style.backgroundColor = randomColor();
+                    firework.style.left = Math.random() * 100 + '%';
+                    firework.style.top = Math.random() * 100 + '%';
+                    firework.style.opacity = '0.8';
+                    firework.style.animation = 'fireworkExpand 1.2s ease-out forwards';
+                    celebration.appendChild(firework);
+                    setTimeout(() => firework.remove(), 1200);
+                }, i * 30);
+            }
+            
+            setTimeout(() => celebration.remove(), 3000);
+        }
+        
+        // 添加CSS动画
+        const styleSheet = document.createElement("style");
+        styleSheet.textContent = `
+            @keyframes fireworkExpand {
+                0% { transform: scale(0); opacity: 1; }
+                100% { transform: scale(15); opacity: 0; }
+            }
+        `;
+        document.head.appendChild(styleSheet);
+        
+        // 完整庆祝特效（撒花 + 烟花）
+        function fullCelebration() {
+            startConfettiCelebration();
+            createSimpleFireworks();
+        }
+        
+        // 显示学生照片
         function displayStudentImage(studentName) {
             const img = document.getElementById('studentImage');
             const canvas = document.getElementById('mosaicCanvas');
@@ -764,48 +847,46 @@
                 }
             };
             img.onerror = () => {
-                console.warn(`头像加载失败: ${studentName}`);
-                if (ENABLE_MOSAIC_ON_IMAGE) canvas.style.display = 'none';
-                else img.style.display = 'none';
+                canvas.style.display = 'none';
+                img.style.display = 'none';
             };
         }
         
-        // GitHub配置 (与之前一致)
+        // GitHub配置
         const GITHUB_CONFIG = { owner: "QingYH", repo: "RandRoll" };
         let scoreboardDataCache = null;
         let isRolling = false, rollInterval, selectedStudent = '', audio;
         
-        // 辅助函数: 保存分数、Token等(保持原有逻辑，仅修改姓名显示脱敏)
         function getGitHubToken() { return localStorage.getItem('githubToken'); }
-        function saveGitHubToken(token) { localStorage.setItem('githubToken', token); showTokenStatus('Token 已保存'); }
         function showTokenStatus(msg) { const el = document.getElementById('tokenStatus'); el.textContent = msg; el.style.display = 'block'; setTimeout(() => el.style.display = 'none', 3000); }
+        function saveGitHubToken(token) { localStorage.setItem('githubToken', token); showTokenStatus('Token已保存'); }
         
         async function saveScoreToGitHub(studentName, score) {
             const token = getGitHubToken();
             if (!token) { showSaveStatus(false, '请先设置GitHub Token'); return false; }
-            const record = { name: studentName, score: score, date: new Date().toLocaleString('zh-CN') };
             const filename = `records/${studentName}.txt`;
             try {
                 const checkRes = await fetch(`https://api.github.com/repos/${GITHUB_CONFIG.owner}/${GITHUB_CONFIG.repo}/contents/${encodeURIComponent(filename)}`, { headers: { 'Authorization': `token ${token}` } });
                 let existingContent = '', sha = null;
                 if (checkRes.ok) { const fileData = await checkRes.json(); sha = fileData.sha; existingContent = decodeURIComponent(escape(atob(fileData.content))); }
-                const newRecord = `姓名：${record.name}\n分数：${record.score}\n日期：${record.date}\n${'-'.repeat(30)}\n`;
+                const newRecord = `姓名：${studentName}\n分数：${score}\n日期：${new Date().toLocaleString()}\n${'-'.repeat(30)}\n`;
                 const newContent = existingContent + newRecord;
                 const encodedContent = btoa(unescape(encodeURIComponent(newContent)));
-                const res = await fetch(`https://api.github.com/repos/${GITHUB_CONFIG.owner}/${GITHUB_CONFIG.repo}/contents/${encodeURIComponent(filename)}`, { method: 'PUT', headers: { 'Authorization': `token ${token}`, 'Accept': 'application/vnd.github.v3+json' }, body: JSON.stringify({ message: `Add score for ${studentName}`, content: encodedContent, sha: sha }) });
+                const res = await fetch(`https://api.github.com/repos/${GITHUB_CONFIG.owner}/${GITHUB_CONFIG.repo}/contents/${encodeURIComponent(filename)}`, { method: 'PUT', headers: { 'Authorization': `token ${token}`, 'Accept': 'application/vnd.github.v3+json' }, body: JSON.stringify({ message: `Add score`, content: encodedContent, sha: sha }) });
                 if (res.ok) { showSaveStatus(true, '分数已保存！'); showScoreAnimation(score); await updateScoreboardCache(); return true; }
                 else { showSaveStatus(false, '保存失败'); return false; }
-            } catch(e) { showSaveStatus(false, `网络错误`); return false; }
+            } catch(e) { showSaveStatus(false, '网络错误'); return false; }
         }
+        
         function showSaveStatus(success, msg) { const el = document.getElementById('saveStatus'); el.textContent = msg; el.style.color = success ? '#4caf50' : '#f44336'; el.style.display = 'block'; setTimeout(() => el.style.display = 'none', 5000); }
         function showScoreAnimation(score) { const container = document.getElementById('scoreAnimation'); const div = document.createElement('div'); div.classList.add('score-display'); div.textContent = (score > 0 ? '+' : '') + score; container.appendChild(div); setTimeout(() => div.remove(), 4000); }
         
         async function getScoreboardData() {
             const token = getGitHubToken();
-            if (!token) return { error: '请先设置GitHub Token' };
+            if (!token) return { error: '请先设置Token' };
             try {
                 const res = await fetch(`https://api.github.com/repos/${GITHUB_CONFIG.owner}/${GITHUB_CONFIG.repo}/contents/records`, { headers: { 'Authorization': `token ${token}` } });
-                if (!res.ok) return { error: 'records目录不存在' };
+                if (!res.ok) return { data: [] };
                 const files = await res.json(); const scoreMap = new Map();
                 for (const file of files) {
                     if (file.name.endsWith('.txt')) {
@@ -813,36 +894,30 @@
                         const content = await contentRes.text();
                         const studentFileName = file.name.replace('.txt', '');
                         const records = content.split('-'.repeat(30));
+                        let total = 0;
                         for (const record of records) {
                             const lines = record.split('\n');
-                            let score = 0;
-                            for (const line of lines) if (line.trim().startsWith('分数：')) { score = parseInt(line.replace('分数：', '').trim()); break; }
-                            if (!isNaN(score)) scoreMap.set(studentFileName, (scoreMap.get(studentFileName) || 0) + score);
+                            for (const line of lines) {
+                                if (line.trim().startsWith('分数：')) {
+                                    const s = parseInt(line.replace('分数：', '').trim());
+                                    if (!isNaN(s)) total += s;
+                                    break;
+                                }
+                            }
                         }
+                        scoreMap.set(studentFileName, total);
                     }
                 }
                 const arr = Array.from(scoreMap.entries()).map(([n, s]) => ({ name: n, totalScore: s })).sort((a,b)=>b.totalScore - a.totalScore);
                 return { data: arr };
-            } catch(e) { return { error: e.message }; }
-        }
-        async function updateScoreboardCache() { const res = await getScoreboardData(); scoreboardDataCache = res.data || []; }
-        async function showScoreboard() { document.getElementById('scoreboardModal').style.display = 'block'; await updateScoreboardCache(); renderScoreboard(scoreboardDataCache || []); }
-        function renderScoreboard(data) {
-            const container = document.getElementById('scoreboardData');
-            if (!data.length) { container.innerHTML = '<div class="loading-message">暂无数据</div>'; return; }
-            let html = `<table class="scoreboard-table"><thead><tr><th>排名</th><th>姓名</th><th>总分</th></tr></thead><tbody>`;
-            data.forEach((item, idx) => {
-                // 得分榜同样应用姓名脱敏规则
-                const displayName = getPrivacyName(item.name);
-                html += `<tr><td>${idx+1}</td><td>${displayName}</td><td>${item.totalScore}</td></tr>`;
-            });
-            html += `</tbody></table>`;
-            container.innerHTML = html;
+            } catch(e) { return { data: [] }; }
         }
         
+        async function updateScoreboardCache() { const res = await getScoreboardData(); scoreboardDataCache = res.data || []; }
+        async function showScoreboard() { document.getElementById('scoreboardModal').style.display = 'block'; await updateScoreboardCache(); renderScoreboard(); }
+        function renderScoreboard() { const container = document.getElementById('scoreboardData'); if (!scoreboardDataCache || !scoreboardDataCache.length) { container.innerHTML = '<div>暂无数据</div>'; return; } let html = '<table class="scoreboard-table"><tr><th>排名</th><th>姓名</th><th>总分</th></tr>'; scoreboardDataCache.forEach((item, idx) => { html += `<tr><td>${idx+1}</td><td>${getPrivacyName(item.name)}</td><td>${item.totalScore}</td></tr>`; }); html += '</table>'; container.innerHTML = html; }
+        
         function createStars() { for(let i=0;i<150;i++){const s=document.createElement('div');s.classList.add('star');s.style.cssText=`width:${Math.random()*3+1}px;height:${Math.random()*3+1}px;left:${Math.random()*100}%;top:${Math.random()*100}%;animation-delay:${Math.random()*2}s`;document.getElementById('stars').appendChild(s);} }
-        function createFireworks() { /* 原有效果简化保留 */ const cel = document.getElementById('celebration'); cel.style.display='block'; setTimeout(()=>cel.style.display='none',4000); }
-        function createSparkles() { /* 保留装饰 */ }
         
         function selectStudent(student) {
             selectedStudent = student;
@@ -851,33 +926,31 @@
             document.getElementById('studentName').classList.add('selected');
             if(audio) { audio.pause(); audio.currentTime = 0; }
             displayStudentImage(student);
-            createFireworks();
-            document.getElementById('message').textContent = `恭喜${displayName}同学中奖啦！`;
+            // 调用撒花庆祝效果！
+            fullCelebration();
+            document.getElementById('message').textContent = `🎉 恭喜${displayName}同学中奖啦！🎉`;
             const speech = new SpeechSynthesisUtterance(`恭喜${getPrivacyName(student)}同学中奖啦`); speech.lang='zh-CN'; window.speechSynthesis.speak(speech);
             setTimeout(() => {
                 document.getElementById('studentImage').style.display = 'none';
                 document.getElementById('mosaicCanvas').style.display = 'none';
                 document.getElementById('studentDisplay').classList.add('hidden');
                 document.getElementById('imageContainer').classList.add('no-border');
-                const nameInImg = document.getElementById('studentNameInImage');
-                nameInImg.textContent = displayName;
-                nameInImg.style.display = 'block';
+                document.getElementById('studentNameInImage').textContent = displayName;
+                document.getElementById('studentNameInImage').style.display = 'block';
                 document.getElementById('scoreSection').style.display = 'block';
                 document.getElementById('scoringStudent').textContent = displayName;
-            }, 5000);
+            }, 4500);
         }
         
         function stopRolling() {
             clearInterval(rollInterval); isRolling = false;
-            const studentNameEl = document.getElementById('studentName');
-            studentNameEl.classList.remove('rolling');
+            document.getElementById('studentName').classList.remove('rolling');
             const randomIndex = Math.floor(Math.random() * students.length);
             selectStudent(students[randomIndex]);
         }
         
         document.addEventListener('DOMContentLoaded', () => {
             createStars();
-            // 密码验证
             document.getElementById('submitPassword').addEventListener('click', () => {
                 if(document.getElementById('passwordInput').value === 'math123') {
                     document.getElementById('passwordSection').style.display = 'none';
@@ -885,7 +958,6 @@
                     updateScoreboardCache();
                 } else alert('密码错误');
             });
-            // 填充下拉框
             students.forEach(s => { let opt = document.createElement('option'); opt.value = s; opt.textContent = getPrivacyName(s); document.getElementById('studentSelect').appendChild(opt); });
             document.getElementById('startBtn').onclick = () => {
                 if(isRolling) return;
@@ -893,15 +965,12 @@
             };
             document.getElementById('stopBtn').onclick = () => { if(isRolling) stopRolling(); };
             document.getElementById('specifyBtn').onclick = () => { document.getElementById('specifySection').style.display='block'; document.getElementById('scoreSection').style.display='none'; };
-            document.getElementById('confirmSpecify').onclick = () => { let sel = document.getElementById('studentSelect').value; if(sel) selectStudent(sel); else alert('请选择'); document.getElementById('specifySection').style.display='none'; };
+            document.getElementById('confirmSpecify').onclick = () => { let sel = document.getElementById('studentSelect').value; if(sel) selectStudent(sel); document.getElementById('specifySection').style.display='none'; };
             document.getElementById('submitScore').onclick = async () => { let score = document.getElementById('scoreInput').value; if(score===''||score<-100||score>100) alert('请输入-100~100分'); else { await saveScoreToGitHub(selectedStudent, parseInt(score)); document.getElementById('scoreInput').value=''; document.getElementById('scoreSection').style.display='none'; document.getElementById('studentDisplay').classList.remove('hidden'); document.getElementById('studentNameInImage').style.display='none'; document.getElementById('imageContainer').classList.remove('no-border'); } };
             document.getElementById('scoreboardBtn').onclick = showScoreboard;
-            document.getElementById('refreshScoreboard').onclick = async () => { await updateScoreboardCache(); renderScoreboard(scoreboardDataCache||[]); };
-            document.getElementById('downloadScoreboard').onclick = () => { if(!scoreboardDataCache) alert('无数据'); else { let csv = "\uFEFF排名,姓名,总分\n"; scoreboardDataCache.forEach((s,i)=>{ csv+=`${i+1},${getPrivacyName(s.name)},${s.totalScore}\n`; }); const blob = new Blob([csv],{type:'text/csv'}); const a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download=`得分榜.csv`; a.click(); } };
             document.getElementById('closeScoreboard').onclick = () => document.getElementById('scoreboardModal').style.display='none';
-            document.getElementById('saveToken').onclick = () => { let token = document.getElementById('githubTokenInput').value; if(token) saveGitHubToken(token); else showTokenStatus('请输入Token'); };
+            document.getElementById('saveToken').onclick = () => { let token = document.getElementById('githubTokenInput').value; if(token) saveGitHubToken(token); };
             document.getElementById('tokenToggle').onclick = () => document.getElementById('githubTokenSection').classList.toggle('collapsed');
-            if(getGitHubToken()) showTokenStatus('Token已加载');
         });
     </script>
 </body>
